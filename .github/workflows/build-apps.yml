@@ -4,7 +4,7 @@
 # Run it: GitHub → Actions → "Build Beam Beam apps" → Run workflow → type a
 # version (e.g. 1.0.1) → Run.  About 15–20 minutes later every download button
 # on the website points at the new version.
-#
+
 # If one platform fails (for example GitHub has no free Mac machine), the others
 # are still published. Open the run, click "Re-run failed jobs", and the missing
 # app is added to the same release.
