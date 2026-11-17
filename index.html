@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Beam Beam — Send big files directly to anyone, free and encrypted</title>
+<meta name="description" content="Send files of any size straight to anyone with a link or QR code. No upload, no sign-up, no size limit. End-to-end encrypted, works through strict networks, and the link expires on a timer you choose.">
+<meta name="author" content="H24 Creationz">
+<meta name="application-name" content="Beam Beam">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Beam Beam — Send big files directly to anyone">
+<meta property="og:description" content="No upload. No size limit. End-to-end encrypted. Share a link or QR code and the files travel straight to them.">
+<meta property="og:image" content="media/og-card.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#2638E8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Beam Beam">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="beambeam-apple-touch-icon.png">
+<link rel="preload" href="fonts/bricolage-grotesque-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/figtree-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* Decide app mode before first paint: installed PWA, native app, or ?app */
+(function(){var q=location.search,h=document.documentElement;
+ var sa=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone;
+ if(sa||/[?&]app\b/.test(q)||window.beamDesktop||(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()))h.classList.add('app');
+})();
+</script>
+<style>
+/*FONTS-START*/
+@font-face{font-family:"Bricolage Grotesque";src:url(fonts/bricolage-grotesque-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Bricolage Grotesque";src:url(fonts/bricolage-grotesque-latin-800-normal.woff2) format("woff2");font-weight:800;font-display:swap}
+@font-face{font-family:"Figtree";src:url(fonts/figtree-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Figtree";src:url(fonts/figtree-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Figtree";src:url(fonts/figtree-latin-600-normal.woff2) format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Figtree";src:url(fonts/figtree-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+/*FONTS-END*/
+
+:root{
+  color-scheme:light;
+  --cobalt:#2638E8; --cobalt-2:#1B28B8; --cobalt-3:#121B86; --cobalt-soft:#E8EBFF;
+  --sun:#FFD23F; --sun-ink:#3A2E00;
+  --ink:#0E1630; --muted:#56607A; --faint:#8A93AD;
+  --paper:#F5F6FB; --card:#FFFFFF; --well:#F0F2F9; --line:#E2E6F1;
+  --ok:#0F9D64; --ok-soft:#E3F7EE; --bad:#D93A43; --bad-soft:#FDECED;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --text:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --lift:0 40px 80px -36px rgba(8,14,80,.55),0 14px 32px -16px rgba(8,14,80,.35);
+  --soft:0 18px 40px -24px rgba(20,30,90,.28);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ink:#EEF1FF; --muted:#A6AECB; --faint:#7C86A8;
+    --paper:#0C1233; --card:#141B45; --well:#1B2354; --line:#28316A; --cobalt-soft:#1E2A72;
+    --ok:#3BD38F; --ok-soft:#12352A; --bad:#FF6B72; --bad-soft:#3A1622;
+    --lift:0 40px 80px -36px rgba(0,0,0,.75),0 14px 32px -16px rgba(0,0,0,.5);
+    --soft:0 18px 40px -24px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ink:#EEF1FF; --muted:#A6AECB; --faint:#7C86A8;
+  --paper:#0C1233; --card:#141B45; --well:#1B2354; --line:#28316A; --cobalt-soft:#1E2A72;
+  --ok:#3BD38F; --ok-soft:#12352A; --bad:#FF6B72; --bad-soft:#3A1622;
+  --lift:0 40px 80px -36px rgba(0,0,0,.75),0 14px 32px -16px rgba(0,0,0,.5);
+  --soft:0 18px 40px -24px rgba(0,0,0,.6);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(76px + env(safe-area-inset-top,0px));-webkit-text-size-adjust:100%}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.6 var(--text);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;min-height:100%}
+img,video,svg{max-width:100%;display:block}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px;border-radius:8px}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:1200px;margin:0 auto;padding:0 clamp(18px,4vw,32px)}
+.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.025em;line-height:1.04;margin:0;font-weight:800}
+h2{font-size:clamp(32px,4.4vw,54px)}
+h3{font-size:clamp(19px,1.6vw,22px);font-weight:700;letter-spacing:-.015em;line-height:1.2}
+.lead{color:var(--muted);font-size:clamp(17px,1.5vw,20px);line-height:1.55;max-width:60ch;margin:0}
+section{padding:clamp(64px,9vw,112px) 0}
+
+/* ---------------------------------------------------------------- header */
+.top{position:sticky;top:0;z-index:40;padding-top:env(safe-area-inset-top,0px);background:#2436E4;color:#fff}
+.top.scrolled{box-shadow:0 10px 30px -18px rgba(8,14,80,.7)}
+.nav{display:flex;align-items:center;gap:14px;height:66px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.03em;white-space:nowrap}
+.brand svg{width:34px;height:34px;filter:drop-shadow(0 4px 10px rgba(5,10,60,.35))}
+.nav nav{display:flex;gap:2px;margin-left:auto}
+.nav nav a{text-decoration:none;color:rgba(255,255,255,.82);font-weight:600;font-size:15px;padding:8px 13px;border-radius:10px}
+.nav nav a:hover{color:#fff;background:rgba(255,255,255,.12)}
+.btn-install{display:inline-flex;align-items:center;gap:8px;border:0;background:#fff;color:var(--cobalt-2);font-weight:700;font-size:15px;padding:9px 15px;border-radius:12px;box-shadow:0 8px 20px -10px rgba(5,10,60,.6);white-space:nowrap}
+.btn-install:hover{background:var(--sun);color:var(--sun-ink)}
+.btn-install .ic{font-size:18px}
+.netpill{display:none;align-items:center;gap:8px;font-size:14px;font-weight:600;color:rgba(255,255,255,.88);background:rgba(255,255,255,.12);padding:6px 12px;border-radius:999px;margin-left:auto}
+.dot{width:8px;height:8px;border-radius:50%;background:#F5A524;flex:none;box-shadow:0 0 0 3px rgba(245,165,36,.22)}
+.dot.on{background:#33D69F;box-shadow:0 0 0 3px rgba(51,214,159,.22)}
+.dot.off{background:#FF5C66;box-shadow:0 0 0 3px rgba(255,92,102,.22)}
+@media (max-width:900px){.nav nav{display:none}.btn-install{margin-left:auto}}
+
+/* ---------------------------------------------------------------- hero */
+.hero{position:relative;isolation:isolate;background:radial-gradient(120% 90% at 85% 0%,#3A4CFF 0%,var(--cobalt) 38%,var(--cobalt-2) 72%,var(--cobalt-3) 100%);color:#fff;padding:clamp(28px,5vw,64px) 0 clamp(56px,7vw,96px);overflow:hidden;margin-top:-1px}
+.beams{position:absolute;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none}
+.beams .chev{fill:none;stroke:rgba(255,255,255,.07);stroke-width:46;stroke-linecap:round;stroke-linejoin:round}
+.beams .ray{fill:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:160 4000;stroke-dashoffset:160;animation:ray 3.2s cubic-bezier(.55,0,.25,1) .5s 2 both}
+.beams .ray:nth-of-type(2){animation-delay:1.1s;animation-duration:3.6s}
+.beams .ray:nth-of-type(3){animation-delay:1.8s;animation-duration:3s}
+.beams .ray:nth-of-type(4){animation-delay:2.4s;animation-duration:3.8s}
+@keyframes ray{from{stroke-dashoffset:160}to{stroke-dashoffset:-1800}}
+html.app .beams .ray,html.busy .beams .ray{display:none}
+.hero-grid{display:grid;grid-template-columns:minmax(0,460px) minmax(0,1fr);gap:clamp(32px,6vw,88px);align-items:center}
+.hero-copy h1{font-size:clamp(40px,5.9vw,80px);letter-spacing:-.035em;line-height:.98;margin:0 0 22px;text-wrap:balance}
+.hero-copy .lead{color:rgba(255,255,255,.84)}
+.lead .short{display:none}
+@media (max-width:600px){.lead .long{display:none}.lead .short{display:inline}}
+.trust{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,max-content));gap:12px 26px;font-weight:600;font-size:15.5px;color:rgba(255,255,255,.92)}
+.trust li{display:flex;align-items:center;gap:10px}
+.trust .ic{font-size:20px;color:var(--sun)}
+.hero-note{margin:30px 0 0;font-size:14.5px;color:rgba(255,255,255,.7)}
+.hero-note a{color:#fff;font-weight:600}
+@media (max-width:960px){
+  .hero-grid{grid-template-columns:minmax(0,1fr);gap:26px}
+  .hero-copy{order:-1;max-width:640px}
+  .hero-copy h1{margin-bottom:12px}
+  .trust,.hero-note{display:none}
+  .app-shell{max-width:520px;width:100%;margin:0 auto}
+}
+@media (max-width:960px) and (min-width:600px){.hero-copy{text-align:center;margin:0 auto}.hero-copy .lead{margin:0 auto}}
+
+/* ---------------------------------------------------------------- app card */
+.app-shell{position:relative}
+.card{background:var(--card);color:var(--ink);border-radius:26px;box-shadow:var(--lift);overflow:hidden;position:relative}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:14px 14px 0;padding:4px;background:var(--well);border-radius:14px}
+.seg button{border:0;background:transparent;border-radius:11px;padding:10px;font-weight:700;font-size:15px;color:var(--muted);display:flex;gap:8px;align-items:center;justify-content:center}
+.seg button .ic{font-size:18px}
+.seg button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 4px 12px -6px rgba(14,22,48,.35)}
+.pane{padding:20px 22px 22px;animation:pane .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes pane{from{opacity:0;transform:translateY(8px)}}
+
+.drop{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:26px 16px 22px;border:2px dashed var(--line);border-radius:20px;transition:border-color .2s,background .2s}
+.drop.over{border-color:var(--cobalt);background:var(--cobalt-soft)}
+.add-big{width:84px;height:84px;border-radius:50%;border:0;background:var(--cobalt);color:#fff;display:grid;place-items:center;box-shadow:0 18px 30px -14px rgba(38,56,232,.9);transition:transform .2s,background .2s}
+.add-big:hover{transform:scale(1.05);background:var(--cobalt-2)}
+.add-big .ic{font-size:38px;stroke-width:2.4}
+.drop b{display:block;font-family:var(--display);font-size:22px;margin-top:14px;letter-spacing:-.02em}
+.drop .sub{color:var(--muted);font-size:15px}
+.linkbtn{border:0;background:none;padding:0;color:var(--cobalt);font-weight:700;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .linkbtn{color:#9AA8FF}}
+.drop .hint{margin:10px 0 0;font-size:13.5px;color:var(--faint)}
+
+.files{list-style:none;margin:0;padding:0;max-height:252px;overflow:auto;scrollbar-width:thin}
+.files li{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 2px;border-bottom:1px solid var(--line)}
+.files li:last-child{border-bottom:0}
+.fi{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:var(--cobalt-soft);color:var(--cobalt)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fi{color:#AEB9FF}}
+.fi .ic{font-size:21px}
+.fi.k-image{background:#FFF1D6;color:#B26B00}.fi.k-video{background:#FFE3E8;color:#C2264B}.fi.k-audio{background:#EDE3FF;color:#6B3FD4}
+.fi.k-archive{background:#E5F4EA;color:#1D7A46}.fi.k-pdf{background:#FFE6E0;color:#C2401F}
+.fn{min-width:0}
+.fn b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fn span{font-size:13.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.fbar{display:block;height:4px;border-radius:4px;background:var(--well);margin-top:6px;overflow:hidden}
+.fbar i{display:block;height:100%;width:0;background:var(--cobalt);border-radius:4px;transition:width .3s linear}
+.fbar.done i{background:var(--ok)}
+.iconbtn{border:0;background:transparent;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:var(--muted)}
+.iconbtn:hover{background:var(--well);color:var(--ink)}
+.iconbtn .ic{font-size:18px}
+.sum{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:14.5px;color:var(--muted);padding:10px 0 2px}
+.sum b{color:var(--ink);font-variant-numeric:tabular-nums}
+.sum .sp{flex:1}
+
+.opts{margin-top:16px}
+.lbl{display:block;font-size:14px;font-weight:700;margin:0 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:6px 13px;font-size:14px;font-weight:600;color:var(--muted)}
+.chips button:hover{border-color:var(--faint);color:var(--ink)}
+.chips button[aria-pressed="true"]{border-color:var(--cobalt);background:var(--cobalt);color:#fff}
+.more{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.more summary{cursor:pointer;font-weight:700;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:8px;color:var(--ink);padding:4px 0}
+.more summary::-webkit-details-marker{display:none}
+.more summary .ic{transition:transform .2s;font-size:16px;color:var(--muted)}
+.more[open] summary .ic{transform:rotate(90deg)}
+.field{display:block;margin-top:12px}
+.field span{display:block;font-size:13.5px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.input{width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:11px 13px;font-size:16px;outline:none;transition:border-color .2s,box-shadow .2s}
+.input:focus{border-color:var(--cobalt);box-shadow:0 0 0 4px color-mix(in srgb,var(--cobalt) 18%,transparent)}
+textarea.input{resize:vertical;min-height:64px;line-height:1.45}
+.pw{position:relative}
+.pw .iconbtn{position:absolute;right:5px;top:50%;transform:translateY(-50%)}
+.pw .input{padding-right:46px}
+
+.go{width:100%;margin-top:18px;border:0;border-radius:16px;padding:16px 18px;background:var(--cobalt);color:#fff;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 16px 30px -16px rgba(38,56,232,.95);transition:background .2s,transform .12s,opacity .2s}
+.go:hover{background:var(--cobalt-2)}
+.go:active{transform:scale(.985)}
+.go:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.go .ic{font-size:20px}
+.go.sun{background:var(--sun);color:var(--sun-ink);box-shadow:0 16px 30px -16px rgba(200,150,0,.9)}
+.go.sun:hover{background:#FFC800}
+.ghost{border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:9px 14px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.ghost:hover{border-color:var(--faint)}
+.ghost .ic{font-size:17px}
+.ghost.danger{color:var(--bad)}
+.fine{display:flex;gap:8px;align-items:flex-start;margin:14px 0 0;font-size:13.5px;color:var(--muted);line-height:1.45}
+.fine .ic{font-size:16px;margin-top:2px;color:var(--ok)}
+
+/* live share */
+.live-head{display:flex;gap:16px;align-items:center}
+.ring{position:relative;width:86px;height:86px;flex:none}
+.ring svg{width:86px;height:86px;transform:rotate(-90deg)}
+.ring .bg{stroke:var(--well);stroke-width:7;fill:none}
+.ring .fg{stroke:var(--cobalt);stroke-width:7;fill:none;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+.ring.low .fg{stroke:#E5484D}
+.ring .t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.ring .t b.h{font-size:15.5px;letter-spacing:-.03em}
+.ring .t b{font-family:var(--display);font-size:19px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.ring .t span{font-size:11.5px;color:var(--muted);margin-top:3px;font-weight:600}
+.live-head h3{font-size:21px}
+.live-head p{margin:2px 0 8px;color:var(--muted);font-size:14.5px}
+.live-act{display:flex;gap:6px;flex-wrap:wrap}
+.live-act .ghost{padding:6px 11px;font-size:13.5px;border-radius:10px}
+.qrbox{display:flex;justify-content:center;margin:18px 0 14px}
+.qr{background:#fff;padding:12px;border-radius:20px;box-shadow:0 0 0 1px var(--line),0 14px 30px -20px rgba(14,22,48,.45);width:212px;height:212px}
+.qr svg{width:100%;height:100%}
+.linkrow{display:flex;gap:6px;background:var(--well);border-radius:14px;padding:5px 5px 5px 13px;align-items:center}
+.linkrow input{flex:1;min-width:0;border:0;background:transparent;font-size:14.5px;font-weight:600;color:var(--ink);outline:none;text-overflow:ellipsis}
+.linkrow input:not(:focus){direction:rtl}  /* show the unique end of the link; the start is always the same address */
+.linkrow button{border:0;background:var(--cobalt);color:#fff;font-weight:700;font-size:14.5px;border-radius:10px;padding:9px 14px;display:flex;gap:7px;align-items:center}
+.linkrow button.ok{background:var(--ok)}
+.linkrow .ic{font-size:17px}
+.shares{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.shares a,.shares button{border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:8px 4px;font-size:12.5px;font-weight:700;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink)}
+.shares a:hover,.shares button:hover{border-color:var(--faint)}
+.shares .ic{font-size:20px}
+.codeline{margin:12px 0 0;font-size:13.5px;color:var(--muted);text-align:center;line-height:1.5}
+.codeline b{display:inline-block;font-family:var(--display);font-size:17px;color:var(--ink);letter-spacing:.06em;background:var(--well);padding:1px 9px;border-radius:8px;margin:0 2px;font-variant-numeric:tabular-nums}
+.peers{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.peers h4{margin:0 0 6px;font-size:14px;font-weight:700;display:flex;justify-content:space-between}
+.peers h4 span{color:var(--muted);font-weight:600}
+.waiting{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:14.5px;margin:4px 0}
+.pulse{width:10px;height:10px;border-radius:50%;background:var(--cobalt);position:relative;flex:none}
+.pulse::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--cobalt);opacity:0;animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{from{transform:scale(.4);opacity:.8}to{transform:scale(1.4);opacity:0}}
+.peer{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;padding:8px 0;align-items:center}
+.peer .av{width:34px;height:34px;border-radius:50%;background:var(--cobalt-soft);color:var(--cobalt);display:grid;place-items:center}
+.peer .av .ic{font-size:18px}
+.peer b{font-size:14.5px;font-weight:600}
+.peer .st{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--well);color:var(--muted)}
+.badge.p2p{background:var(--ok-soft);color:var(--ok)}
+.badge.relay{background:#FFF3D1;color:#8A6100}
+.badge.done{background:var(--ok-soft);color:var(--ok)}
+.badge .ic{font-size:12px}
+.keep{display:flex;gap:9px;align-items:flex-start;margin:14px 0 0;padding:11px 13px;border-radius:14px;background:#FFF7DB;color:#5E4700;font-size:13.5px;line-height:1.45}
+.keep .ic{font-size:17px;margin-top:1px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .keep{background:#3A3010;color:#FFE79A}:root:not([data-theme="light"]) .badge.relay{background:#3A3010;color:#FFD95A}}
+
+/* receive */
+.codein{font-family:var(--display);font-size:26px;letter-spacing:.14em;text-align:center;text-transform:uppercase;padding:14px}
+.or{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:13.5px;margin:16px 0}
+.or::before,.or::after{content:"";height:1px;background:var(--line);flex:1}
+.state{text-align:center;padding:16px 4px 6px}
+.state .big{width:76px;height:76px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;background:var(--cobalt-soft);color:var(--cobalt)}
+.state .big .ic{font-size:36px}
+.state .big.ok{background:var(--ok-soft);color:var(--ok)}
+.state .big.bad{background:var(--bad-soft);color:var(--bad)}
+.state h3{font-size:24px;margin-bottom:6px}
+.state p{color:var(--muted);margin:0 auto;max-width:34ch;font-size:15.5px}
+.spinner{width:44px;height:44px;border-radius:50%;border:4px solid var(--well);border-top-color:var(--cobalt);animation:spin .8s linear infinite;margin:6px auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rx-head{display:flex;gap:12px;align-items:center}
+.rx-head .av{width:46px;height:46px;border-radius:14px;background:var(--cobalt);color:#fff;display:grid;place-items:center;flex:none}
+.rx-head .av .ic{font-size:24px}
+.rx-head h3{font-size:20px}
+.rx-head p{margin:0;color:var(--muted);font-size:14px}
+.rx-exp{margin-left:auto;text-align:right;font-size:12.5px;color:var(--muted);line-height:1.2;flex:none}
+.rx-exp b{display:block;font-family:var(--display);font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}
+@media (max-width:340px){.rx-head{flex-wrap:wrap}.rx-head .av{width:40px;height:40px}.rx-head>div:nth-child(2){flex:1}.rx-exp{width:100%;margin:0;text-align:left;display:flex;gap:6px;align-items:baseline}.rx-exp b{display:inline;font-size:16px}}
+.msg{margin:14px 0 4px;background:var(--well);border-radius:4px 16px 16px 16px;padding:11px 14px;font-size:15px;white-space:pre-wrap;word-break:break-word}
+.rx-files{margin-top:10px}
+.progress{margin-top:16px}
+.pbar{height:12px;border-radius:12px;background:var(--well);overflow:hidden}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cobalt),#5B6CFF);border-radius:12px;transition:width .5s linear}
+.pnum{display:flex;justify-content:space-between;align-items:baseline;margin-top:9px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;gap:10px;flex-wrap:wrap}
+.pnum b{font-family:var(--display);font-size:30px;color:var(--ink);letter-spacing:-.03em}
+
+.netline{display:flex;align-items:center;gap:8px;padding:11px 22px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);background:var(--well)}
+.netline .sp{flex:1}
+@media (max-width:420px){.netline .relays{display:none}}
+.netline .lock{display:flex;gap:6px;align-items:center}
+.netline .ic{font-size:14px}
+
+/* drag overlay */
+.dropcover{position:fixed;inset:0;z-index:80;background:color-mix(in srgb,var(--cobalt) 82%,transparent);display:none;place-items:center;color:#fff;text-align:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.dropcover.on{display:grid}
+.dropcover div{border:3px dashed rgba(255,255,255,.7);border-radius:32px;padding:56px 70px}
+.dropcover .ic{font-size:64px;margin:0 auto 14px}
+.dropcover b{font-family:var(--display);font-size:34px;display:block}
+
+/* toast + sheets */
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:14px;font-weight:600;font-size:15px;z-index:90;opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--soft);display:flex;gap:10px;align-items:center;max-width:calc(100% - 32px)}
+.toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast a,.toast button{color:var(--sun);font-weight:700;background:none;border:0;padding:0}
+.sheet-bg{position:fixed;inset:0;background:rgba(6,10,40,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:85;display:none;align-items:flex-end;justify-content:center;padding:14px}
+.sheet-bg.open{display:flex}
+@media (min-width:640px){.sheet-bg{align-items:center}}
+.sheet{width:min(500px,100%);background:var(--card);border-radius:26px;padding:24px;box-shadow:var(--lift);animation:up .28s cubic-bezier(.2,.8,.2,1);margin-bottom:env(safe-area-inset-bottom,0px);max-height:calc(100dvh - 28px);overflow:auto}
+@keyframes up{from{transform:translateY(24px);opacity:0}}
+.sheet h3{font-size:23px;margin:4px 0 6px}
+.sheet p{color:var(--muted);margin:0 0 12px}
+.sheet ol{padding-left:22px;margin:8px 0 18px;color:var(--muted)}
+.sheet ol li{margin:6px 0}
+.sheet .row{display:flex;gap:8px;flex-wrap:wrap}
+.sheet .row>*{flex:1}
+.scan{position:relative;border-radius:18px;overflow:hidden;background:#000;aspect-ratio:1;margin:8px 0 14px}
+.scan video{width:100%;height:100%;object-fit:cover}
+.scan i{position:absolute;inset:16%;border:3px solid var(--sun);border-radius:22px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+
+/* dark-mode contrast for icons and the selected tab */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .seg button[aria-selected="true"]{background:#2E3A8C;color:#fff;box-shadow:0 4px 14px -6px rgba(0,0,0,.6)}
+  :root:not([data-theme="light"]) .state .big:not(.ok):not(.bad),:root:not([data-theme="light"]) .peer .av{color:#B4BFFF;background:#26338A}
+  :root:not([data-theme="light"]) .fi.k-image{background:rgba(255,190,80,.16);color:#FFC766}
+  :root:not([data-theme="light"]) .fi.k-video{background:rgba(255,90,120,.16);color:#FF8BA3}
+  :root:not([data-theme="light"]) .fi.k-audio{background:rgba(160,120,255,.18);color:#C3A8FF}
+  :root:not([data-theme="light"]) .fi.k-archive{background:rgba(60,200,120,.16);color:#6FE0A3}
+  :root:not([data-theme="light"]) .fi.k-pdf{background:rgba(255,110,80,.16);color:#FF9C85}
+  :root:not([data-theme="light"]) .codeline b{color:#fff}
+}
+
+/* ---------------------------------------------------------------- site sections */
+.platforms{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 30px;padding:26px 0 0;color:rgba(255,255,255,.78);font-weight:600;font-size:15px}
+.platforms span{display:flex;gap:8px;align-items:center}
+.platforms .ic{font-size:19px}
+.head{max-width:760px}
+.head.center{margin:0 auto;text-align:center}
+.head.center .lead{margin:0 auto}
+.head .lead{margin-top:16px}
+
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,3vw,36px);margin-top:56px;counter-reset:s;position:relative}
+.step{position:relative}
+.step .art{aspect-ratio:4/3;border-radius:24px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;position:relative}
+.step .art svg{width:78%;height:auto}
+.step .n{font-family:var(--display);font-weight:800;font-size:15px;width:34px;height:34px;border-radius:50%;background:var(--sun);color:var(--sun-ink);display:grid;place-items:center;margin:20px 0 10px}
+.step p{color:var(--muted);margin:6px 0 0;font-size:16px}
+@media (max-width:820px){.steps{grid-template-columns:1fr;max-width:480px;margin-left:auto;margin-right:auto}}
+
+.video{margin-top:40px;border-radius:26px;overflow:hidden;background:#05082A;aspect-ratio:16/9;box-shadow:var(--lift)}
+.video video{width:100%;height:100%;object-fit:cover}
+.video.vert{aspect-ratio:9/16;max-width:400px;margin-left:auto;margin-right:auto}
+.vtabs{display:flex;gap:8px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.vtabs button{border:0;background:var(--card);box-shadow:0 0 0 1.5px var(--line) inset;border-radius:999px;padding:8px 16px;font-weight:700;font-size:14.5px;color:var(--muted)}
+.vtabs button[aria-pressed="true"]{background:var(--ink);color:var(--paper);box-shadow:none}
+
+.why{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.4fr);gap:clamp(32px,6vw,90px);align-items:start}
+.why .head{position:sticky;top:110px}
+.feats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 36px}
+.feat{padding:22px 0;border-top:1px solid var(--line)}
+.feat .ic{font-size:26px;color:var(--cobalt);margin-bottom:12px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .feat .ic{color:#9AA8FF}}
+.feat p{color:var(--muted);margin:6px 0 0;font-size:15.5px;line-height:1.55}
+@media (max-width:900px){.why{grid-template-columns:1fr}.why .head{position:static}}
+@media (max-width:560px){.feats{grid-template-columns:1fr}}
+
+.shots{display:grid;gap:clamp(56px,8vw,110px);margin-top:60px}
+.shot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:clamp(28px,5vw,64px);align-items:center}
+.shot.flip .txt{order:2}
+.shot .txt p{color:var(--muted);margin:12px 0 0}
+.shot ul{list-style:none;padding:0;margin:16px 0 0}
+.shot li{display:flex;gap:10px;align-items:flex-start;padding:5px 0}
+.shot li .ic{color:var(--ok);font-size:19px;margin-top:3px}
+.devices{position:relative;padding:0 9% 9% 0}
+.win{border-radius:16px;overflow:hidden;background:var(--card);box-shadow:var(--lift),0 0 0 1px var(--line)}
+.win .bar{display:flex;align-items:center;gap:8px;height:34px;padding:0 13px;background:var(--well);font-size:12.5px;font-weight:700;color:var(--muted)}
+.win .bar svg{width:16px;height:16px}
+.win .bar i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.win .bar .sp{flex:1}
+.win img{width:100%;height:auto}
+.phone{position:absolute;right:0;bottom:0;width:28%;min-width:118px;border-radius:30px;background:#0A0E2A;padding:6px;box-shadow:var(--lift)}
+.phone img{border-radius:25px;width:100%;height:auto}
+@media (max-width:900px){.shot{grid-template-columns:1fr}.shot.flip .txt{order:0}}
+
+.compare{margin-top:44px;border-radius:24px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.compare table{width:100%;border-collapse:collapse;font-size:15.5px}
+.compare th,.compare td{padding:15px 18px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+.compare tr:last-child td{border-bottom:0}
+.compare thead th{font-family:var(--display);font-size:17px;background:var(--well)}
+.compare thead th:nth-child(2){background:var(--cobalt);color:#fff}
+.compare td:nth-child(2){background:color-mix(in srgb,var(--cobalt) 6%,transparent);font-weight:600}
+.compare .y,.compare .x{display:inline-flex;gap:8px;align-items:center}
+.compare .y .ic{color:var(--ok);font-size:19px}.compare .x .ic{color:var(--bad);font-size:19px}
+.compare .x{color:var(--muted)}
+.tscroll{overflow-x:auto}
+.tscroll table{min-width:620px}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:40px}
+.stat{padding:20px 4px 0;border-top:3px solid var(--ink)}
+.stat b{display:block;font-family:var(--display);font-size:clamp(34px,4.4vw,52px);letter-spacing:-.04em;line-height:1}
+.stat span{display:block;color:var(--muted);font-size:15px;margin-top:8px}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 16px}}
+
+.dl-head{display:flex;flex-wrap:wrap;gap:16px;align-items:end;justify-content:space-between}
+.release{font-size:14px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;display:flex;gap:8px;align-items:center}
+.release b{color:var(--ink)}
+.release a{color:inherit;font-weight:700}
+.dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:34px}
+.os{background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:12px;position:relative}
+.os.mine{border-color:var(--cobalt);box-shadow:0 0 0 4px color-mix(in srgb,var(--cobalt) 15%,transparent)}
+.os .tag{position:absolute;top:18px;right:18px;font-size:12px;font-weight:700;color:#fff;background:var(--cobalt);padding:3px 10px;border-radius:999px;display:none}
+.os.mine .tag{display:block}
+.os .top2{display:flex;align-items:center;gap:12px}
+.os .oi{width:44px;height:44px;border-radius:13px;background:var(--well);display:grid;place-items:center}
+.os .oi .ic{font-size:23px}
+.os h3{font-size:21px}
+.req{font-size:14px;color:var(--muted);margin:0}
+.os .btns{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:14px;padding:12px 16px;font-weight:700;text-decoration:none;font-size:15.5px;text-align:center;white-space:normal;transition:background .2s,transform .12s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--cobalt);color:#fff}
+.btn-primary:hover{background:var(--cobalt-2)}
+.btn-ghost{background:var(--card);color:var(--ink);box-shadow:0 0 0 1.5px var(--line) inset}
+.btn-ghost:hover{box-shadow:0 0 0 1.5px var(--faint) inset}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn .meta{font-weight:600;opacity:.75;font-size:.88em}
+.os details{font-size:14px;color:var(--muted)}
+.os summary{cursor:pointer;font-weight:700;color:var(--ink)}
+.os ol{margin:8px 0 0;padding-left:20px}
+.skel{display:inline-block;width:46px;height:.9em;border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.15),rgba(255,255,255,.45),rgba(255,255,255,.15));background-size:200% 100%;animation:sh 1.2s infinite;vertical-align:-1px}
+.btn-ghost .skel{background:linear-gradient(90deg,var(--line),var(--well),var(--line));background-size:200% 100%}
+@keyframes sh{to{background-position:-200% 0}}
+@media (max-width:1000px){.dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.dl{grid-template-columns:minmax(0,1fr)}}
+
+.faq{max-width:840px;margin:40px auto 0}
+.faq details{border-bottom:1px solid var(--line);padding:18px 2px}
+.faq summary{cursor:pointer;font-weight:700;font-size:17.5px;list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .ic{font-size:20px;color:var(--cobalt);transition:transform .2s}
+.faq details[open] summary .ic{transform:rotate(45deg)}
+.faq p{color:var(--muted);margin:10px 0 0;max-width:68ch}
+
+.final{position:relative;isolation:isolate;overflow:hidden;background:var(--cobalt);color:#fff;border-radius:32px;padding:clamp(48px,7vw,84px) clamp(24px,5vw,64px);display:grid;grid-template-columns:minmax(0,1.3fr) auto;gap:28px;align-items:center}
+.final h2{font-size:clamp(34px,4.6vw,58px)}
+.final p{color:rgba(255,255,255,.8);margin:14px 0 0;font-size:18px}
+.final svg.bgc{position:absolute;right:-60px;top:50%;transform:translateY(-50%);width:520px;z-index:-1;opacity:.12}
+.final .btn{background:var(--sun);color:var(--sun-ink);font-size:17px;padding:16px 24px}
+.final .btn:hover{background:#FFC800}
+@media (max-width:760px){.final{grid-template-columns:1fr}}
+
+footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom,0px));color:var(--muted);font-size:14.5px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between;align-items:center}
+footer .brand{color:var(--ink);font-size:18px}
+footer .brand svg{width:28px;height:28px}
+footer nav{display:flex;gap:18px;flex-wrap:wrap}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--ink)}
+.heart{color:#E5484D}
+
+/* ---------------------------------------------------------------- app mode (installed PWA / native) */
+html.app .site-only{display:none!important}
+html.app .netpill{display:flex}
+html.app body{min-height:100dvh;display:flex;flex-direction:column;background:var(--cobalt-3)}
+html.app main{flex:1;display:flex}
+html.app .hero{flex:1;display:flex;align-items:flex-start;padding:clamp(16px,4vh,48px) 0 calc(24px + env(safe-area-inset-bottom,0px))}
+html.app .hero-grid{grid-template-columns:minmax(0,500px);justify-content:center;width:100%}
+html.app .hero-copy{display:none}
+html.app .app-shell{max-width:500px;width:100%;margin:0 auto}
+html.app .top{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;position:absolute;left:0;right:0}
+html.app .hero{padding-top:calc(78px + env(safe-area-inset-top,0px))}
+@media (max-width:540px){
+  html.app .hero .wrap{padding:0 10px}
+  html.app .card{border-radius:24px}
+}
+
+@media (max-width:420px){
+  .pane{padding:18px 16px 18px}
+  .seg{margin:10px 10px 0}
+  .shares{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .shares a,.shares button{font-size:11.5px}
+  .live-head{gap:12px}
+  .ring,.ring svg{width:76px;height:76px}
+  .qr{width:190px;height:190px}
+  .netline{padding:10px 16px}
+}
+/* foldables & very narrow screens (Galaxy Fold cover ~280px) */
+@media (max-width:330px){
+  body{font-size:16px}
+  .brand span{display:none}
+  .trust{grid-template-columns:1fr}
+  .shares{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .add-big{width:70px;height:70px}
+  .live-head{flex-direction:column;text-align:center}
+  .live-act{justify-content:center}
+  .qr{width:170px;height:170px}
+}
+/* dual-screen / spanning foldables */
+@media (horizontal-viewport-segments:2){
+  .hero-grid{grid-template-columns:env(viewport-segment-width 0 0,1fr) env(viewport-segment-width 1 0,1fr);gap:env(viewport-segment-left 1 0,40px)}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.hero,.dropcover{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4E5DFF"/><stop offset="1" stop-color="#1A26B0"/></linearGradient>
+  <symbol id="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="17" fill="url(#lg)"/><rect x=".75" y=".75" width="62.5" height="62.5" rx="16.3" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="1.5"/><path d="M16.5 19.5 29 32 16.5 44.5" fill="none" stroke="#FFD23F" stroke-width="7.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M33.5 19.5 46 32 33.5 44.5" fill="none" stroke="#fff" stroke-width="7.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h3.6l2.2 2.2h7.2A2.5 2.5 0 0 1 21 9.7v7.8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7.5A2.5 2.5 0 0 0 5 5.5v13A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V8z"/><path d="M14 3v5h5"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H7.5A2.5 2.5 0 0 0 5 5.5v13A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="2"/><path d="m21 15.5-4.5-4.5L7 20.2"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="2.5" y="6" width="13.5" height="12" rx="2.5"/><path d="m16 10.2 5.5-3.2v10L16 13.8z"/></symbol>
+  <symbol id="i-audio" viewBox="0 0 24 24"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.5"/><path d="M5 8.5v9.5A2 2 0 0 0 7 20h10a2 2 0 0 0 2-2V8.5M10 12.5h4"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M21.5 2.5 10.8 13.2"/><path d="M21.5 2.5 15 21l-4.2-7.8L3 9z"/></symbol>
+  <symbol id="i-get" viewBox="0 0 24 24"><path d="M12 3.5v11m-4.5-4.5 4.5 4.5 4.5-4.5"/><path d="M4 15.5v2.5A2.5 2.5 0 0 0 6.5 20.5h11A2.5 2.5 0 0 0 20 18v-2.5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13.5a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7.1-7.1l-1.7 1.7"/><path d="M14 10.5a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7.1 7.1l1.7-1.7"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5.5 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3.5v12M7.5 8 12 3.5 16.5 8"/><path d="M8 11H6.5A2.5 2.5 0 0 0 4 13.5v5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5v-5a2.5 2.5 0 0 0-2.5-2.5H16"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24"><path d="M3.6 20.4 5 16.2A8.6 8.6 0 1 1 8.1 19z"/><path d="M9 8.8c.2 3 2.9 5.9 6 6.3l1.3-1.5-2-1.1-1 .8a5 5 0 0 1-2.5-2.5l.8-1-1.1-2z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10" width="15" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 19.5 6v6c0 4.4-3.2 7.9-7.5 9-4.3-1.1-7.5-4.6-7.5-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 4.5 14H11l-1 7.5L19.5 10H13z"/></symbol>
+  <symbol id="i-inf" viewBox="0 0 24 24"><path d="M12 12c-2-2.7-3.7-4-5.5-4a4 4 0 0 0 0 8c1.8 0 3.5-1.3 5.5-4zm0 0c2 2.7 3.7 4 5.5 4a4 4 0 0 0 0-8c-1.8 0-3.5 1.3-5.5 4z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1Q11.3 5 12 5c6 0 9.5 7 9.5 7a17 17 0 0 1-3 4M6.6 6.6C4 8.4 2.5 12 2.5 12S6 19 12 19a9.6 9.6 0 0 0 5.2-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 9.6a4.5 4.5 0 0 1-.5 8.9z"/></symbol>
+  <symbol id="i-direct" viewBox="0 0 24 24"><path d="M3.5 12h17M7 8.5 3.5 12 7 15.5M17 8.5l3.5 3.5-3.5 3.5"/></symbol>
+  <symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1.8"/><path d="M2 19.5h20"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.8"/><path d="M11 18h2"/></symbol>
+  <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V6.5A2.5 2.5 0 0 1 6.5 4H8M16 4h1.5A2.5 2.5 0 0 1 20 6.5V8M20 16v1.5a2.5 2.5 0 0 1-2.5 2.5H16M8 20H6.5A2.5 2.5 0 0 1 4 17.5V16M7.5 12h9"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 1 1-2.4-5.7L20 8"/><path d="M20 3.5V8h-4.5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V4.5h5V7M6 7l1 13h10l1-13"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM14 19.5h1.5M19.5 14v1.5"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="m11.2 11.8 8.8-8.8M16.5 6.5l3 3"/></symbol>
+  <symbol id="i-tg" viewBox="0 0 24 24"><path d="M21 4.5 3 11.2l5.6 2 2.2 6.3 3.2-3.8 4.6 3.5z"/><path d="m8.6 13.2 8.4-6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 21.5 20h-19z"/><path d="M12 10v4.5M12 17.4v.1"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-fold" viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16" rx="2"/><rect x="13" y="4" width="8" height="16" rx="2"/></symbol>
+  <symbol id="i-tablet" viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol>
+  <symbol id="i-resume" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3.5 3.5V8H8M10 9.5v5l4-2.5z"/></symbol>
+  <symbol id="i-win" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M3 5.5 10.5 4.4v7.1H3zm0 13 7.5 1.1v-7H3zM11.5 4.3 21 3v8.5h-9.5zm0 15.4L21 21v-8.4h-9.5z"/></symbol>
+  <symbol id="i-mac" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></symbol>
+  <symbol id="i-linux" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="m7 9 3 3-3 3M12.5 15h4.5"/></symbol>
+  <symbol id="i-android" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M6 9h12v8a2 2 0 0 1-2 2h-1v3h-2v-3h-2v3H9v-3H8a2 2 0 0 1-2-2zm-3 0h2v7H3zm16 0h2v7h-2zM7.5 8a4.5 4.5 0 0 1 9 0z"/></symbol>
+</defs></svg>
+
+<header class="top" id="top-bar">
+  <div class="wrap nav">
+    <a class="brand" href="./" aria-label="Beam Beam home"><svg aria-hidden="true"><use href="#logo"/></svg><span>Beam Beam</span></a>
+    <nav class="site-only" aria-label="Main">
+      <a href="#how">How it works</a><a href="#demo">Demo</a><a href="#why">Why Beam Beam</a><a href="#apps">Apps</a><a href="#faq">Questions</a>
+    </nav>
+    <div class="netpill" id="netpill"><i class="dot" id="netpill-dot"></i><span id="netpill-t">Connecting</span></div>
+    <button class="btn-install site-only" id="install-btn" type="button"><svg class="ic"><use href="#i-get"/></svg>Get the app</button>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero" aria-label="Send files">
+  <svg class="beams" viewBox="0 0 1440 820" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="rayg" x1="0" x2="1"><stop offset="0" stop-color="#FFD23F" stop-opacity="0"/><stop offset=".7" stop-color="#FFD23F" stop-opacity=".9"/><stop offset="1" stop-color="#fff"/></linearGradient>
+    </defs>
+    <path class="chev" d="M840 120 1110 410 840 700"/><path class="chev" d="M1100 120 1370 410 1100 700"/>
+    <path class="ray" stroke="url(#rayg)" d="M-60 250 C 400 230 800 330 1500 300"/>
+    <path class="ray" stroke="url(#rayg)" d="M-60 520 C 380 560 900 440 1500 470"/>
+    <path class="ray" stroke="url(#rayg)" d="M-60 690 C 500 650 900 720 1500 650"/>
+    <path class="ray" stroke="url(#rayg)" d="M-60 120 C 450 160 1000 90 1500 140"/>
+  </svg>
+  <div class="wrap hero-grid">
+
+    <div class="app-shell" id="app">
+      <div class="card" id="card">
+        <div class="seg" role="tablist" aria-label="Send or receive">
+          <button type="button" role="tab" id="tab-send" aria-selected="true"><svg class="ic"><use href="#i-send"/></svg>Send</button>
+          <button type="button" role="tab" id="tab-recv" aria-selected="false"><svg class="ic"><use href="#i-get"/></svg>Receive</button>
+        </div>
+
+        <!-- SEND · choose files -->
+        <div class="pane" id="p-pick">
+          <div class="drop" id="drop">
+            <button class="add-big" id="add-files" type="button" aria-label="Add files"><svg class="ic"><use href="#i-plus"/></svg></button>
+            <b>Add files</b>
+            <span class="sub">or <button class="linkbtn" id="add-folder" type="button">choose a folder</button></span>
+            <p class="hint">Drop, paste or pick anything. No size limit.</p>
+          </div>
+          <input type="file" id="in-files" multiple hidden>
+          <input type="file" id="in-folder" webkitdirectory multiple hidden>
+          <div id="picked" hidden>
+            <ul class="files" id="file-list"></ul>
+            <div class="sum"><span><b id="sum-n">0 files</b> · <span id="sum-s">0 B</span></span><span class="sp"></span><button class="linkbtn" id="add-more" type="button">Add more</button><button class="iconbtn" id="clear-all" type="button" aria-label="Remove all files"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+          </div>
+          <div class="opts">
+            <span class="lbl">Link expires after</span>
+            <div class="chips" id="exp-chips">
+              <button type="button" data-m="10" aria-pressed="false">10 min</button>
+              <button type="button" data-m="60" aria-pressed="true">1 hour</button>
+              <button type="button" data-m="360" aria-pressed="false">6 hours</button>
+              <button type="button" data-m="1440" aria-pressed="false">24 hours</button>
+            </div>
+            <details class="more">
+              <summary><svg class="ic"><use href="#i-chev"/></svg>Name, message and password</summary>
+              <label class="field"><span>Your name</span><input class="input" id="o-name" maxlength="40" autocomplete="name" placeholder="Shown to the people you send to"></label>
+              <label class="field"><span>Message</span><textarea class="input" id="o-msg" maxlength="500" rows="2" placeholder="Here are the photos from Saturday"></textarea></label>
+              <label class="field"><span>Password</span><span class="pw" style="display:block;margin:0;color:inherit"><input class="input" id="o-pw" type="password" maxlength="64" autocomplete="new-password" placeholder="Optional — needed to download"><button class="iconbtn" type="button" id="pw-eye" aria-label="Show password"><svg class="ic"><use href="#i-eye"/></svg></button></span></label>
+            </details>
+          </div>
+          <button class="go" id="go" type="button" disabled><svg class="ic"><use href="#i-link"/></svg>Get a link</button>
+          <p class="fine"><svg class="ic"><use href="#i-shield"/></svg><span>Files travel straight from this device, end-to-end encrypted. Nothing is uploaded or stored.</span></p>
+        </div>
+
+        <!-- SEND · live link -->
+        <div class="pane" id="p-live" hidden>
+          <div class="live-head">
+            <div class="ring" id="ring"><svg viewBox="0 0 86 86"><circle class="bg" cx="43" cy="43" r="38"/><circle class="fg" id="ring-fg" cx="43" cy="43" r="38" stroke-dasharray="238.76" stroke-dashoffset="0"/></svg><div class="t"><b id="cd">60:00</b><span id="cd-l">left</span></div></div>
+            <div>
+              <h3>Your link is live</h3>
+              <p id="live-sub">3 files · 2.4 GB</p>
+              <div class="live-act"><button class="ghost" id="extend" type="button"><svg class="ic"><use href="#i-clock"/></svg>+15 min</button><button class="ghost danger" id="stop" type="button"><svg class="ic"><use href="#i-x"/></svg>Stop sharing</button></div>
+            </div>
+          </div>
+          <div class="qrbox"><div class="qr" id="qr" role="img" aria-label="QR code for your download link"></div></div>
+          <div class="linkrow"><input id="link" readonly aria-label="Download link"><button type="button" id="copy-link"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
+          <div class="shares">
+            <button type="button" id="sh-native"><svg class="ic"><use href="#i-share"/></svg>Share</button>
+            <a id="sh-wa" target="_blank" rel="noopener"><svg class="ic"><use href="#i-wa"/></svg>WhatsApp</a>
+            <a id="sh-tg" target="_blank" rel="noopener"><svg class="ic"><use href="#i-tg"/></svg>Telegram</a>
+            <a id="sh-mail"><svg class="ic"><use href="#i-mail"/></svg>Email</a>
+          </div>
+          <p class="codeline">No camera? Type this code under Receive<br><b id="code">XXXX XXXX XXXX</b><span id="pw-note" hidden> plus your password</span></p>
+          <div class="peers"><h4>Downloads <span id="peer-count"></span></h4><div id="peers"><p class="waiting"><span class="pulse"></span>Waiting for someone to open your link</p></div></div>
+          <p class="keep"><svg class="ic"><use href="#i-alert"/></svg><span>Keep this page open and your screen on until they finish. The files come straight from this device.</span></p>
+        </div>
+
+        <!-- SEND · ended -->
+        <div class="pane" id="p-ended" hidden>
+          <div class="state"><div class="big" id="end-ico"><svg class="ic"><use href="#i-clock"/></svg></div><h3 id="end-t">Your link has expired</h3><p id="end-p">Nobody new can open it. Share again to get a fresh link for the same files.</p></div>
+          <button class="go" id="again" type="button"><svg class="ic"><use href="#i-refresh"/></svg>Share the same files again</button>
+          <button class="go sun" id="fresh" type="button" style="margin-top:10px"><svg class="ic"><use href="#i-plus"/></svg>Send different files</button>
+        </div>
+
+        <!-- RECEIVE · enter code -->
+        <div class="pane" id="p-enter" hidden>
+          <div class="state" style="padding-top:4px"><div class="big"><svg class="ic"><use href="#i-get"/></svg></div><h3>Receive files</h3><p>Open the sender’s link, scan their QR code, or type their 12-character code.</p></div>
+          <label class="field"><span class="sr">Transfer code</span><input class="input codein" id="code-in" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="80" placeholder="XXXX XXXX XXXX"></label>
+          <p class="fine" id="code-err" hidden style="color:var(--bad)"><svg class="ic" style="color:var(--bad)"><use href="#i-alert"/></svg><span>That code isn’t complete. It has 12 letters and numbers.</span></p>
+          <button class="go" id="code-go" type="button"><svg class="ic"><use href="#i-get"/></svg>Find the files</button>
+          <div class="or">or</div>
+          <button class="ghost" id="scan" type="button" style="width:100%;padding:13px"><svg class="ic"><use href="#i-scan"/></svg>Scan a QR code</button>
+        </div>
+
+        <!-- RECEIVE · looking for sender -->
+        <div class="pane" id="p-wait" hidden>
+          <div class="state"><div class="spinner"></div><h3 id="wait-t">Finding the sender</h3><p id="wait-p">Connecting securely to their device…</p></div>
+          <button class="ghost" id="wait-cancel" type="button" style="width:100%;margin-top:16px">Cancel</button>
+        </div>
+
+        <!-- RECEIVE · password -->
+        <div class="pane" id="p-pw" hidden>
+          <div class="state" style="padding-top:4px"><div class="big"><svg class="ic"><use href="#i-key"/></svg></div><h3>Enter the password</h3><p>The sender protected these files. Ask them for the password.</p></div>
+          <label class="field"><span class="sr">Password</span><input class="input" id="rx-pw" type="password" autocomplete="off" placeholder="Password"></label>
+          <p class="fine" id="pw-err" hidden style="color:var(--bad)"><svg class="ic" style="color:var(--bad)"><use href="#i-alert"/></svg><span>That password didn’t match. Check it with the sender.</span></p>
+          <button class="go" id="pw-go" type="button"><svg class="ic"><use href="#i-lock"/></svg>Unlock</button>
+        </div>
+
+        <!-- RECEIVE · files -->
+        <div class="pane" id="p-rx" hidden>
+          <div class="rx-head">
+            <div class="av"><svg class="ic"><use href="#i-user"/></svg></div>
+            <div style="min-width:0"><h3 id="rx-from">Someone sent you files</h3><p id="rx-sum">3 files · 2.4 GB</p></div>
+            <div class="rx-exp" id="rx-exp-box">Link expires in<b id="rx-exp">59:12</b></div>
+          </div>
+          <div class="msg" id="rx-msg" hidden></div>
+          <ul class="files rx-files" id="rx-list"></ul>
+          <div class="progress" id="rx-prog" hidden>
+            <div class="pbar"><i id="rx-bar"></i></div>
+            <div class="pnum"><b id="rx-pct">0%</b><span id="rx-speed"></span><span id="rx-mode"></span></div>
+          </div>
+          <button class="go" id="rx-go" type="button"><svg class="ic"><use href="#i-get"/></svg><span id="rx-go-t">Download</span></button>
+          <p class="fine" id="rx-fine"><svg class="ic"><use href="#i-shield"/></svg><span>Sent straight from the sender’s device, end-to-end encrypted.</span></p>
+          <div id="rx-done" hidden>
+            <button class="go sun" id="rx-back" type="button"><svg class="ic"><use href="#i-send"/></svg>Send files back</button>
+          </div>
+        </div>
+
+        <!-- RECEIVE · unavailable -->
+        <div class="pane" id="p-gone" hidden>
+          <div class="state"><div class="big bad"><svg class="ic" id="gone-ic"><use href="#i-clock"/></svg></div><h3 id="gone-t">This link has expired</h3><p id="gone-p">Ask the sender to share the files again.</p></div>
+          <button class="go" id="gone-retry" type="button" hidden><svg class="ic"><use href="#i-refresh"/></svg>Try again</button>
+          <button class="go sun" id="gone-send" type="button" style="margin-top:10px"><svg class="ic"><use href="#i-send"/></svg>Send your own files</button>
+        </div>
+
+        <div class="netline"><i class="dot" id="net-dot"></i><span id="net-t">Connecting</span><span class="sp"></span><span class="lock"><svg class="ic"><use href="#i-lock"/></svg>End-to-end encrypted</span></div>
+      </div>
+    </div>
+
+    <div class="hero-copy site-only">
+      <h1>Send big files straight to anyone.</h1>
+      <p class="lead"><span class="long">No upload, no sign-up, no size limit. Share a link or QR code and your files travel directly to their device, encrypted, on a link that expires when you say.</span><span class="short">No upload, no sign-up, no size limit. Encrypted, with a link that expires when you say.</span></p>
+      <ul class="trust">
+        <li><svg class="ic"><use href="#i-inf"/></svg>Any size, any file</li>
+        <li><svg class="ic"><use href="#i-shield"/></svg>End-to-end encrypted</li>
+        <li><svg class="ic"><use href="#i-clock"/></svg>Link expires on a timer</li>
+        <li><svg class="ic"><use href="#i-bolt"/></svg>Direct, so it’s fast</li>
+      </ul>
+      <p class="hero-note">Free on the web. Also on <a href="#apps">Windows, Mac, Linux, Android and iPhone</a>.</p>
+    </div>
+  </div>
+  <div class="platforms site-only wrap" aria-label="Works on">
+    <span><svg class="ic"><use href="#i-win"/></svg>Windows</span><span><svg class="ic"><use href="#i-mac"/></svg>macOS</span><span><svg class="ic"><use href="#i-linux"/></svg>Linux</span><span><svg class="ic"><use href="#i-android"/></svg>Android</span><span><svg class="ic"><use href="#i-phone"/></svg>iPhone &amp; iPad</span><span><svg class="ic"><use href="#i-fold"/></svg>Foldables</span><span><svg class="ic"><use href="#i-globe"/></svg>Any browser</span>
+  </div>
+</section>
+
+<section id="how" class="site-only">
+  <div class="wrap">
+    <div class="head center"><h2>Three taps. No waiting.</h2><p class="lead">Upload sites make you wait twice: once to upload, once to download. Beam Beam skips the middle, so the download starts the moment they open your link.</p></div>
+    <div class="steps">
+      <div class="step">
+        <div class="art"><svg viewBox="0 0 240 180" aria-hidden="true"><rect x="58" y="34" width="96" height="120" rx="14" fill="var(--cobalt-soft)"/><rect x="74" y="22" width="96" height="120" rx="14" fill="var(--card)" stroke="var(--line)" stroke-width="3"/><path d="M96 62h52M96 80h52M96 98h34" stroke="var(--faint)" stroke-width="6" stroke-linecap="round"/><circle cx="172" cy="136" r="30" fill="var(--cobalt)"/><path d="M172 122v28M158 136h28" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg></div>
+        <div class="n">1</div><h3>Add your files</h3><p>Photos, 4K video, whole folders, a 40 GB backup. Drop them in, paste them, or share them from another app.</p>
+      </div>
+      <div class="step">
+        <div class="art"><svg viewBox="0 0 240 180" aria-hidden="true"><rect x="40" y="30" width="104" height="104" rx="16" fill="#fff" stroke="var(--line)" stroke-width="3"/><g fill="#0E1630"><rect x="52" y="42" width="26" height="26" rx="6"/><rect x="106" y="42" width="26" height="26" rx="6"/><rect x="52" y="96" width="26" height="26" rx="6"/><rect x="86" y="50" width="10" height="10" rx="3"/><rect x="86" y="72" width="10" height="10" rx="3"/><rect x="98" y="84" width="10" height="10" rx="3"/><rect x="110" y="98" width="10" height="10" rx="3"/><rect x="86" y="108" width="10" height="10" rx="3"/><rect x="122" y="110" width="10" height="10" rx="3"/></g><g fill="#fff"><rect x="58" y="48" width="14" height="14" rx="3"/><rect x="112" y="48" width="14" height="14" rx="3"/><rect x="58" y="102" width="14" height="14" rx="3"/></g><rect x="118" y="120" width="96" height="36" rx="18" fill="var(--sun)"/><path d="M140 138h30" stroke="var(--sun-ink)" stroke-width="5" stroke-linecap="round"/><circle cx="192" cy="138" r="6" fill="var(--sun-ink)"/></svg></div>
+        <div class="n">2</div><h3>Share the link or QR</h3><p>Send the link on WhatsApp, Telegram or email, or let them scan the QR code. Pick how long it stays alive.</p>
+      </div>
+      <div class="step">
+        <div class="art"><svg viewBox="0 0 240 180" aria-hidden="true"><rect x="22" y="56" width="74" height="54" rx="7" fill="var(--card)" stroke="var(--line)" stroke-width="3"/><path d="M12 118h94" stroke="var(--line)" stroke-width="5" stroke-linecap="round"/><rect x="164" y="40" width="50" height="94" rx="11" fill="var(--card)" stroke="var(--line)" stroke-width="3"/><path d="M104 84h52" stroke="var(--sun)" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 12"/><path d="M146 74l12 10-12 10" fill="none" stroke="var(--cobalt)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><rect x="172" y="96" width="34" height="7" rx="3.5" fill="var(--well)"/><rect x="172" y="96" width="24" height="7" rx="3.5" fill="var(--cobalt)"/><circle cx="189" cy="72" r="12" fill="var(--ok-soft)"/><path d="m183 72 4 4 8-8" fill="none" stroke="var(--ok)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="n">3</div><h3>They download, directly</h3><p>Files stream device to device, encrypted the whole way. If the connection drops, it picks up where it left off.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="demo" class="site-only" style="padding-top:0">
+  <div class="wrap">
+    <div class="head center"><h2>From laptop to phone in seconds</h2><p class="lead">A laptop shares, a phone scans and the files arrive. Thirty seconds, start to finish.</p></div>
+    <div class="video" id="video-box">
+      <video id="demo-video" muted loop playsinline controls preload="metadata" poster="media/demo-poster.jpg" width="1920" height="1080">
+        <source src="media/BeamBeam-30s-Horizontal.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="vtabs" role="group" aria-label="Choose a video">
+      <button type="button" aria-pressed="true" data-v="media/BeamBeam-30s-Horizontal.mp4" data-p="media/demo-poster.jpg">30-second tour</button>
+      <button type="button" aria-pressed="false" data-v="media/BeamBeam-Demo.mp4" data-p="media/demo-poster.jpg">Full walkthrough</button>
+      <button type="button" aria-pressed="false" data-v="media/BeamBeam-30s-Vertical.mp4" data-p="media/vertical-poster.jpg" data-vert>Phone view</button>
+    </div>
+  </div>
+</section>
+
+<section id="why" class="site-only" style="padding-top:0">
+  <div class="wrap why">
+    <div class="head"><h2>Built for big files and real networks</h2><p class="lead">Most transfer sites store your files on their servers for days. Beam Beam never holds them at all. It connects your two devices and gets out of the way.</p></div>
+    <div class="feats">
+      <div class="feat"><svg class="ic"><use href="#i-inf"/></svg><h3>No size limit</h3><p>A 200 MB clip or a 100 GB project. Files stream to the receiver’s disk, so even phones handle huge transfers.</p></div>
+      <div class="feat"><svg class="ic"><use href="#i-shield"/></svg><h3>Encrypted end to end</h3><p>Every byte is encrypted on your device and only opened on theirs. The key lives in the link, never on a server.</p></div>
+      <div class="feat"><svg class="ic"><use href="#i-bolt"/></svg><h3>Direct means fast</h3><p>Peer-to-peer over WebRTC, with no server in the middle. On the same Wi-Fi it moves at your local network’s full speed.</p></div>
+      <div class="feat"><svg class="ic"><use href="#i-cloud"/></svg><h3>Gets through strict networks</h3><p>Office firewall blocking direct links? Beam Beam switches to an encrypted relay over secure web ports, automatically.</p></div>
+      <div class="feat"><svg class="ic"><use href="#i-clock"/></svg><h3>Links that expire</h3><p>Choose 10 minutes to 24 hours. Both of you see the countdown. Extend it or stop sharing whenever you like.</p></div>
+      <div class="feat"><svg class="ic"><use href="#i-resume"/></svg><h3>Resumes after drops</h3><p>Lift went underground? Wi-Fi switched? The transfer reconnects and continues from the last byte received.</p></div>
+      <div class="feat"><svg class="ic"><use href="#i-key"/></svg><h3>Optional password</h3><p>Add a password so a forwarded link is useless without it. Repeated wrong guesses get blocked.</p></div>
+      <div class="feat"><svg class="ic"><use href="#i-users"/></svg><h3>Many people, one link</h3><p>Post the link in a group chat. Several people can download at the same time, and you see each one’s progress.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="look" class="site-only" style="padding-top:0">
+  <div class="wrap">
+    <div class="head center"><h2>Clean on every screen</h2><p class="lead">The same app on a 27-inch monitor, a tablet, a folding phone or a 5-inch screen. Light and dark.</p></div>
+    <div class="shots">
+      <div class="shot">
+        <div class="txt"><h3 style="font-size:clamp(26px,3vw,36px)">A link, a QR code and a countdown</h3><p>Everything you need to share sits on one card: the QR code for the person next to you, the link for everyone else, and a live timer.</p><ul><li><svg class="ic"><use href="#i-check"/></svg>One-tap share to WhatsApp, Telegram and email</li><li><svg class="ic"><use href="#i-check"/></svg>A 12-character code for typing on a TV or work PC</li><li><svg class="ic"><use href="#i-check"/></svg>See who’s downloading and how fast</li></ul></div>
+        <div class="devices"><div class="win"><div class="bar"><svg><use href="#logo"/></svg>Beam Beam<span class="sp"></span><i></i><i></i><i></i></div><img src="media/share.jpg" width="1600" height="1000" loading="lazy" alt="Beam Beam on a laptop showing a live link with QR code, link and a 58-minute countdown"></div><div class="phone"><img src="media/m-share.jpg" width="780" height="1688" loading="lazy" alt="The same live link on a phone"></div></div>
+      </div>
+      <div class="shot flip">
+        <div class="txt"><h3 style="font-size:clamp(26px,3vw,36px)">They tap once and it lands</h3><p>The receiver sees who sent it, your message and the file list, then taps Download. Progress, speed and time left are always visible.</p><ul><li><svg class="ic"><use href="#i-check"/></svg>Saves straight to Downloads</li><li><svg class="ic"><use href="#i-check"/></svg>Shows whether the link is direct or relayed</li><li><svg class="ic"><use href="#i-check"/></svg>Nothing to install to receive</li></ul></div>
+        <div class="devices"><div class="win"><div class="bar"><svg><use href="#logo"/></svg>Beam Beam<span class="sp"></span><i></i><i></i><i></i></div><img src="media/receive.jpg" width="1600" height="1000" loading="lazy" alt="Beam Beam receiving three files directly, with progress, speed and time left"></div><div class="phone"><img src="media/m-receive.jpg" width="780" height="1688" loading="lazy" alt="A phone receiving files with a progress bar"></div></div>
+      </div>
+      <div class="shot">
+        <div class="txt"><h3 style="font-size:clamp(26px,3vw,36px)">Install it like an app</h3><p>Add Beam Beam to your home screen or desktop for a full-screen app that opens instantly. Share files into it from any other app on Android.</p><ul><li><svg class="ic"><use href="#i-check"/></svg>Native apps for Windows, Mac, Linux and Android</li><li><svg class="ic"><use href="#i-check"/></svg>Automatic dark mode</li><li><svg class="ic"><use href="#i-check"/></svg>Scan QR codes right inside the app</li></ul></div>
+        <div class="devices"><div class="win"><div class="bar"><svg><use href="#logo"/></svg>Beam Beam<span class="sp"></span><i></i><i></i><i></i></div><img src="media/home-dark.jpg" width="1600" height="1000" loading="lazy" alt="Beam Beam installed as a desktop app in dark mode"></div><div class="phone"><img src="media/m-home.jpg" width="780" height="1688" loading="lazy" alt="Beam Beam installed on a phone home screen"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="compare" class="site-only" style="padding-top:0">
+  <div class="wrap">
+    <div class="head center"><h2>Why not just upload it?</h2><p class="lead">Upload-and-share sites are fine for small things. For big files and private ones, here’s the difference.</p></div>
+    <div class="compare"><div class="tscroll"><table>
+      <thead><tr><th scope="col"></th><th scope="col">Beam Beam</th><th scope="col">Typical upload sites</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Download starts</th><td><span class="y"><svg class="ic"><use href="#i-check"/></svg>Right away</span></td><td><span class="x"><svg class="ic"><use href="#i-x"/></svg>After the full upload</span></td></tr>
+        <tr><th scope="row">File size</th><td><span class="y"><svg class="ic"><use href="#i-check"/></svg>No limit</span></td><td><span class="x"><svg class="ic"><use href="#i-x"/></svg>2–5 GB on free plans</span></td></tr>
+        <tr><th scope="row">Copy kept on a server</th><td><span class="y"><svg class="ic"><use href="#i-check"/></svg>Never</span></td><td><span class="x"><svg class="ic"><use href="#i-x"/></svg>For days</span></td></tr>
+        <tr><th scope="row">Account or email needed</th><td><span class="y"><svg class="ic"><use href="#i-check"/></svg>No</span></td><td><span class="x"><svg class="ic"><use href="#i-x"/></svg>Often</span></td></tr>
+        <tr><th scope="row">Expiry you choose</th><td><span class="y"><svg class="ic"><use href="#i-check"/></svg>10 min to 24 hours, live timer</span></td><td><span class="x"><svg class="ic"><use href="#i-x"/></svg>Fixed, or paid</span></td></tr>
+        <tr><th scope="row">Can keep the sender’s tab closed</th><td><span class="x"><svg class="ic"><use href="#i-x"/></svg>No, sender stays online</span></td><td><span class="y"><svg class="ic"><use href="#i-check"/></svg>Yes</span></td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="stats">
+      <div class="stat"><b>0 bytes</b><span>of your files stored by us</span></div>
+      <div class="stat"><b>256-bit</b><span>AES encryption on every transfer</span></div>
+      <div class="stat"><b>12 chars</b><span>one code to receive anywhere</span></div>
+      <div class="stat"><b>Free</b><span>no account, no ads, no paywall</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="apps" class="site-only" style="padding-top:0">
+  <div class="wrap">
+    <div class="dl-head"><div><h2>Get Beam Beam</h2><p class="lead" style="margin-top:12px">The web version needs nothing. The apps open faster and keep running in their own window.</p></div><div class="release" id="release"><a href="#">See all releases</a></div></div>
+    <div class="dl" id="dl-grid"></div>
+  </div>
+</section>
+
+<section id="faq" class="site-only" style="padding-top:0">
+  <div class="wrap"><div class="head center"><h2>Questions</h2></div>
+    <div class="faq">
+      <details><summary>Are my files uploaded anywhere?<svg class="ic"><use href="#i-plus"/></svg></summary><p>No. Your files stay on your device until the receiver downloads them, and they travel directly between the two devices. If a network blocks direct connections, encrypted pieces pass through a relay on their way, but they can’t be read and nothing is kept.</p></details>
+      <details><summary>Why do I have to keep the page open?<svg class="ic"><use href="#i-plus"/></svg></summary><p>Because your device is the source. That’s what makes Beam Beam private, free and unlimited in size. Keep the tab open and the screen on until the receiver finishes. On a phone, stay in the app; on a laptop, you can use other tabs.</p></details>
+      <details><summary>How big can a file be?<svg class="ic"><use href="#i-plus"/></svg></summary><p>There’s no limit from Beam Beam. The receiver needs enough free storage. Large files are written to disk as they arrive, so they don’t fill up the phone’s memory.</p></details>
+      <details><summary>What happens when the link expires?<svg class="ic"><use href="#i-plus"/></svg></summary><p>Nobody new can open it, and the QR code stops working. Downloads already in progress are allowed to finish. You can add 15 minutes at any time before then, or stop sharing straight away.</p></details>
+      <details><summary>Will it work on my office or school network?<svg class="ic"><use href="#i-plus"/></svg></summary><p>Usually, yes. Beam Beam tries a direct connection first, then falls back to an encrypted relay that runs over standard secure web connections, including port 443. Transfers through the relay are slower than direct ones but still private.</p></details>
+      <details><summary>Is the transfer really encrypted?<svg class="ic"><use href="#i-plus"/></svg></summary><p>Yes. Direct transfers use WebRTC’s built-in DTLS encryption. Relay transfers and all connection messages are encrypted with AES-256-GCM using a key that only exists inside your link. Add a password for an extra lock.</p></details>
+      <details><summary>Can several people download from one link?<svg class="ic"><use href="#i-plus"/></svg></summary><p>Yes, up to 8 at the same time. Each person’s progress shows on your screen. Your upload speed is shared between them.</p></details>
+      <details><summary>Do I need to install anything?<svg class="ic"><use href="#i-plus"/></svg></summary><p>No. Sending and receiving both work in any modern browser on any device. The apps are there if you prefer your own window, a home-screen icon or sharing from other apps.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="site-only" style="padding-top:0">
+  <div class="wrap">
+    <div class="final">
+      <svg class="bgc" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10 30 32 8 54M30 10l22 22-22 22" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><h2>Your files. Their device. Nothing in between.</h2><p>Start a transfer in your browser now. No account needed.</p></div>
+      <a class="btn" href="#main" id="final-go"><svg class="ic"><use href="#i-send"/></svg>Send files now</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site-only">
+  <div class="wrap">
+    <a class="brand" href="./"><svg aria-hidden="true"><use href="#logo"/></svg><span>Beam Beam</span></a>
+    <nav aria-label="Footer"><a href="#how">How it works</a><a href="#apps">Apps</a><a href="#faq">Questions</a><a href="https://github.com/harshavarthanep/BeamBeam" id="gh-link">GitHub</a></nav>
+    <span>© 2026 Beam Beam. Built by H24 Creationz. Made with <span class="heart">❤</span> by Harsha Varthan E P.</span>
+  </div>
+</footer>
+
+<div class="dropcover" id="dropcover" aria-hidden="true"><div><svg class="ic"><use href="#i-plus"/></svg><b>Drop to add</b><span>Files and folders, any size</span></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="sheet-bg" id="sheet-scan" role="dialog" aria-modal="true" aria-labelledby="scan-t">
+  <div class="sheet"><h3 id="scan-t">Scan a Beam Beam QR code</h3><p id="scan-p">Point your camera at the code on the sender’s screen.</p><div class="scan"><video id="scan-v" playsinline muted></video><i></i></div><div class="row"><button class="ghost" id="scan-close" type="button">Cancel</button></div></div>
+</div>
+
+<div class="sheet-bg" id="sheet-ios" role="dialog" aria-modal="true" aria-labelledby="ios-t">
+  <div class="sheet"><h3 id="ios-t">Add Beam Beam to your Home Screen</h3><p>It opens full-screen, like any other app.</p><ol><li>Tap the <b>Share</b> button in Safari’s toolbar.</li><li>Scroll down and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>. Beam Beam is now on your Home Screen.</li></ol><div class="row"><button class="go" id="ios-ok" type="button" style="margin:0">Got it</button></div></div>
+</div>
+
+<div class="sheet-bg" id="sheet-dl" role="dialog" aria-modal="true" aria-labelledby="dl-t">
+  <div class="sheet"><p class="fine" id="dl-state" style="margin:0 0 6px;font-weight:700;color:var(--ink)"></p><h3 id="dl-t">Beam Beam</h3><p id="dl-file" style="font-weight:600;color:var(--ink);word-break:break-all"></p><ol id="dl-steps"></ol><div class="row"><button class="ghost" id="dl-close" type="button">Done</button><a class="btn btn-primary" id="dl-retry" href="#">Download again</a></div></div>
+</div>
+<script src="lib/mqtt.min.js"></script>
+<script src="lib/qrcode.js"></script>
+<script>
+/* =====================================================================
+   Beam Beam — direct, encrypted, expiring file transfer.
+   Built by H24 Creationz · made with ❤ by Harsha Varthan E P
+
+   How a transfer works
+   1. The sender picks files and gets a secret 12-character code. The link
+      is  <site>/#get=CODE&t=EXPIRY  — the part after # never reaches any
+      server.
+   2. Both sides derive an AES-256 key and a room name from the code and
+      meet on several public MQTT relays at once (whichever answers first
+      wins). Every message is encrypted, so the relays only see noise.
+   3. They open a direct WebRTC data channel (DTLS-encrypted). If a
+      firewall blocks it, the bytes flow through the relay instead,
+      AES-GCM encrypted chunk by chunk, with acknowledgements and
+      retransmission.
+   4. The receiver writes straight to disk (Origin Private File System)
+      and can resume from the last byte after any drop.
+   ===================================================================== */
+(() => {
+'use strict';
+
+/* ------------------------------------------------------------ settings */
+const CFG = Object.assign({
+  // Public MQTT relays used to find each other (and to relay data when a
+  // direct link is blocked). Port 443 is listed so strict office networks work.
+  brokers: [
+    'wss://broker.emqx.io:8084/mqtt',
+    'wss://broker.hivemq.com:8884/mqtt',
+    'wss://mqtt.eclipseprojects.io:443/mqtt'
+  ],
+  // STUN finds the direct path. Add a TURN server (e.g. a free Metered.ca or
+  // Cloudflare TURN key) in `turn` for the fastest relay on locked networks:
+  //   turn: [{ urls: ['turns:your.turn.host:443?transport=tcp'], username: 'u', credential: 'p' }]
+  stun: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun.cloudflare.com:3478'],
+  turn: [],
+  topic: 'beambeam/v1',
+  siteUrl: '',                 // auto-detected on the web; set by the native apps
+  p2pTimeout: 12000,           // ms to wait for a direct link before relaying
+  chunk: 64 * 1024,            // direct-link chunk size
+  relayChunk: 48 * 1024,       // relay chunk size
+  relayWindow: 28,             // relay chunks in flight
+  maxPeers: 8,                 // simultaneous downloads per link
+  maxFiles: 1000,
+  forceRelay: false
+}, window.BEAM_CONFIG || {});
+
+const DEFAULT_SITE = 'https://harshavarthanep.github.io/BeamBeam/';
+const SITE = (() => {
+  if (CFG.siteUrl) return CFG.siteUrl.replace(/\/?$/, '/');
+  if (/^https?:$/.test(location.protocol)) return location.origin + location.pathname.replace(/[^/]*$/, '');
+  return DEFAULT_SITE;
+})();
+
+/* ------------------------------------------------------------ tiny helpers */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const te = new TextEncoder(), td = new TextDecoder();
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const ALPH = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+const isApp = document.documentElement.classList.contains('app');
+
+function randCode(n = 12) {
+  let s = '';
+  while (s.length < n) {
+    const b = crypto.getRandomValues(new Uint8Array(n * 2));
+    for (const x of b) { if (x < 248 && s.length < n) s += ALPH[x % 31]; }   // 248 = 8*31, no bias
+  }
+  return s;
+}
+const rid = (n = 10) => { const a = crypto.getRandomValues(new Uint8Array(n)); return [...a].map(x => (x % 36).toString(36)).join(''); };
+const fmtCode = (s) => s.replace(/(.{4})(?=.)/g, '$1 ');
+const cleanCode = (s) => String(s || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
+function fmtBytes(b) {
+  if (!isFinite(b)) return '';
+  const u = ['B', 'KB', 'MB', 'GB', 'TB']; let i = 0;
+  while (b >= 1000 && i < u.length - 1) { b /= 1000; i++; }
+  return (i === 0 ? b : b >= 100 ? b.toFixed(0) : b >= 10 ? b.toFixed(1) : b.toFixed(2)) + ' ' + u[i];
+}
+function fmtClock(sec) {
+  sec = Math.max(0, Math.ceil(sec));
+  const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+  return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(s).padStart(2, '0');
+}
+function fmtEta(sec) {
+  if (!isFinite(sec) || sec <= 0) return '';
+  if (sec < 60) return Math.ceil(sec) + ' s left';
+  if (sec < 3600) return Math.ceil(sec / 60) + ' min left';
+  return (sec / 3600).toFixed(1) + ' h left';
+}
+const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function deviceLabel() {
+  const ua = navigator.userAgent;
+  if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'an iPad';
+  if (/iPhone/.test(ua)) return 'an iPhone';
+  if (/Android/.test(ua)) return /Mobile/.test(ua) ? 'an Android phone' : 'an Android tablet';
+  if (/CrOS/.test(ua)) return 'a Chromebook';
+  if (/Windows/.test(ua)) return 'a Windows PC';
+  if (/Macintosh/.test(ua)) return 'a Mac';
+  if (/Linux/.test(ua)) return 'a Linux PC';
+  return 'a device';
+}
+function kindOf(name, type) {
+  const e = (name.split('.').pop() || '').toLowerCase();
+  if (/^image\//.test(type) || /^(jpe?g|png|gif|webp|heic|heif|svg|bmp|tiff?|raw|cr2|nef|arw|dng|psd)$/.test(e)) return 'image';
+  if (/^video\//.test(type) || /^(mp4|mov|mkv|avi|webm|m4v|wmv|flv|3gp|mts)$/.test(e)) return 'video';
+  if (/^audio\//.test(type) || /^(mp3|wav|flac|aac|m4a|ogg|opus|aiff?)$/.test(e)) return 'audio';
+  if (/^(zip|rar|7z|tar|gz|tgz|bz2|xz|iso|dmg|apk|exe|msi|deb)$/.test(e)) return 'archive';
+  if (e === 'pdf') return 'pdf';
+  if (/^(js|ts|py|java|c|cpp|cs|go|rs|rb|php|html|css|json|xml|ya?ml|sh|sql|md)$/.test(e)) return 'code';
+  if (/^(docx?|odt|rtf|txt|xlsx?|ods|csv|pptx?|odp|pages|numbers|key|epub)$/.test(e)) return 'doc';
+  return 'file';
+}
+const KIND_ICON = { image: 'i-image', video: 'i-video', audio: 'i-audio', archive: 'i-archive', pdf: 'i-doc', code: 'i-code', doc: 'i-doc', file: 'i-file' };
+const icon = (id) => `<svg class="ic"><use href="#${id}"/></svg>`;
+function safeName(n) { return String(n).split(/[\\/]/).pop().replace(/[\u0000-\u001f<>:"|?*]/g, '_').slice(0, 180) || 'file'; }
+
+/* ------------------------------------------------------------ crypto */
+async function sha256hex(str) {
+  const h = await crypto.subtle.digest('SHA-256', te.encode(str));
+  return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function deriveKey(secret) {
+  const base = await crypto.subtle.importKey('raw', te.encode(secret), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: te.encode('beambeam/v1/key'), iterations: 120000, hash: 'SHA-256' },
+    base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+}
+async function seal(key, bytes) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, bytes));
+  const out = new Uint8Array(12 + ct.length); out.set(iv); out.set(ct, 12); return out;
+}
+async function unseal(key, u8) {
+  return new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: u8.subarray(0, 12) }, key, u8.subarray(12)));
+}
+
+/* ------------------------------------------------------------ signaling over several MQTT relays */
+class Signal {
+  constructor(key, listen) {
+    this.key = key; this.listen = listen; this.cl = []; this.seen = new Set(); this.seenQ = [];
+    this.onMsg = null; this.onBin = null; this.onUp = null; this.onStatus = null; this.closed = false;
+  }
+  start() {
+    if (typeof mqtt === 'undefined') { this._status(); return; }
+    CFG.brokers.forEach((url, idx) => {
+      let c;
+      try {
+        c = mqtt.connect(url, { clientId: 'bb_' + rid(12), keepalive: 25, reconnectPeriod: 2500, connectTimeout: 10000, clean: true, protocolVersion: 4, queueQoSZero: false });
+      } catch (e) { return; }
+      const s = { url, c, up: false }; this.cl[idx] = s;
+      c.on('connect', () => { s.up = true; c.subscribe(this.listen, { qos: 0 }); this._status(); if (this.onUp) this.onUp(idx); });
+      const down = () => { if (s.up) { s.up = false; this._status(); } };
+      c.on('close', down); c.on('offline', down); c.on('error', () => {});
+      c.on('message', (t, p) => this._in(p, idx));
+    });
+    this._status();
+  }
+  up() { return this.cl.filter(s => s && s.up).length; }
+  _status() { if (this.onStatus) this.onStatus(this.up(), CFG.brokers.length); }
+  async _in(p, idx) {
+    if (this.closed || !p || p.length < 14) return;
+    const u8 = new Uint8Array(p.buffer, p.byteOffset, p.byteLength);
+    let plain; try { plain = await unseal(this.key, u8.subarray(1)); } catch (e) { return; }
+    if (u8[0] === 1) {
+      let m; try { m = JSON.parse(td.decode(plain)); } catch (e) { return; }
+      if (m.m) { if (this.seen.has(m.m)) return; this.seen.add(m.m); this.seenQ.push(m.m); if (this.seenQ.length > 1500) this.seen.delete(this.seenQ.shift()); }
+      if (this.onMsg) this.onMsg(m, idx);
+    } else if (u8[0] === 2 && this.onBin) this.onBin(plain, idx);
+  }
+  _pub(topic, pkt, idx) {
+    const list = idx == null ? this.cl.filter(s => s && s.up) : [this.cl[idx]].filter(s => s && s.up);
+    if (!list.length) return Promise.resolve(false);
+    return Promise.all(list.map(s => new Promise(res => {
+      try { s.c.publish(topic, pkt, { qos: 0 }, () => res(true)); } catch (e) { res(false); }
+    }))).then(() => true);
+  }
+  async send(topic, obj) {   // control messages go out on every relay; duplicates are dropped by id
+    if (this.closed) return false;
+    obj.m = rid(12);
+    const body = await seal(this.key, te.encode(JSON.stringify(obj)));
+    const pkt = new Uint8Array(body.length + 1); pkt[0] = 1; pkt.set(body, 1);
+    return this._pub(topic, pkt);
+  }
+  async sendBin(topic, plain, idx) {
+    if (this.closed) return false;
+    const body = await seal(this.key, plain);
+    const pkt = new Uint8Array(body.length + 1); pkt[0] = 2; pkt.set(body, 1);
+    return this._pub(topic, pkt, idx);
+  }
+  bestIdx(pref) { if (pref != null && this.cl[pref] && this.cl[pref].up) return pref; const i = this.cl.findIndex(s => s && s.up); return i < 0 ? null : i; }
+  end() { this.closed = true; this.onStatus = null; this.cl.forEach(s => { try { s && s.c.end(true); } catch (e) {} }); this.cl = []; }
+}
+const iceServers = () => [{ urls: CFG.stun }].concat(CFG.turn || []);
+const hasRTC = typeof RTCPeerConnection === 'function';
+
+/* ------------------------------------------------------------ disk sinks for received files */
+const opfsOK = !!(navigator.storage && navigator.storage.getDirectory && window.FileSystemFileHandle && 'createWritable' in FileSystemFileHandle.prototype);
+async function inbox() { const root = await navigator.storage.getDirectory(); return root.getDirectoryHandle('beambeam-inbox', { create: true }); }
+async function cleanInbox() {
+  if (!opfsOK) return;
+  try {
+    const dir = await inbox(); const old = Date.now() - 3 * 3600e3;
+    for await (const [name, h] of dir.entries()) { try { const f = await h.getFile(); if (f.lastModified < old) await dir.removeEntry(name); } catch (e) {} }
+  } catch (e) {}
+}
+async function makeSink(name, size, type) {
+  if (window.BeamNative && window.BeamNative.makeSink) return window.BeamNative.makeSink(name, size, type);
+  if (opfsOK && size > 8e6) {
+    try {
+      const dir = await inbox(); const fname = rid(8) + '-' + safeName(name);
+      const fh = await dir.getFileHandle(fname, { create: true }); const w = await fh.createWritable();
+      return {
+        write: (b) => w.write(b),
+        close: async () => { await w.close(); const f = await fh.getFile(); return { blob: f, name }; },
+        abort: async () => { try { await w.abort(); } catch (e) {} try { await dir.removeEntry(fname); } catch (e) {} }
+      };
+    } catch (e) { /* quota or unsupported — fall back to memory */ }
+  }
+  let parts = [], blobs = [], held = 0;
+  return {
+    write: (b) => { parts.push(b); held += b.byteLength; if (held > 32e6) { blobs.push(new Blob(parts)); parts = []; held = 0; } },
+    close: async () => { blobs.push(new Blob(parts)); parts = []; return { blob: new Blob(blobs, { type: type || 'application/octet-stream' }), name }; },
+    abort: async () => { parts = []; blobs = []; }
+  };
+}
+function saveResult(r) {
+  if (!r) return;
+  if (r.saved) return;                         // already on disk (native apps)
+  const url = URL.createObjectURL(r.blob);
+  const a = document.createElement('a'); a.href = url; a.download = safeName(r.name); a.rel = 'noopener';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 120000);
+}
+
+/* ------------------------------------------------------------ UI basics */
+const panes = ['p-pick', 'p-live', 'p-ended', 'p-enter', 'p-wait', 'p-pw', 'p-rx', 'p-gone'];
+function show(id) { panes.forEach(p => { $('#' + p).hidden = p !== id; }); const send = ['p-pick', 'p-live', 'p-ended'].includes(id); $('#tab-send').setAttribute('aria-selected', String(send)); $('#tab-recv').setAttribute('aria-selected', String(!send)); }
+let toastT;
+function toast(html, ms = 2600) { const t = $('#toast'); t.innerHTML = html; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), ms); }
+function setNet(up, total, closed) {
+  const dot = $('#net-dot'), t = $('#net-t'), pd = $('#netpill-dot'), pt = $('#netpill-t');
+  let cls = 'dot', label;
+  if (!navigator.onLine) { cls += ' off'; label = 'You’re offline'; }
+  else if (closed) { cls += ' on'; label = 'Ready'; }
+  else if (up > 0) { cls += ' on'; label = 'Connected'; }
+  else if (up === -1) { cls += ' on'; label = 'Ready'; }
+  else { label = 'Connecting…'; }
+  dot.className = cls; t.innerHTML = esc(label) + (up > 0 && !closed ? `<span class="relays"> · ${up} of ${total} relays</span>` : ''); pd.className = cls; pt.textContent = up > 0 || up === -1 || closed ? 'Online' : label.replace('…', '');
+}
+let wake = null;
+async function keepAwake(on) {
+  try {
+    if (on && !wake && 'wakeLock' in navigator) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); }
+    if (!on && wake) { await wake.release(); wake = null; }
+  } catch (e) {}
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && (S.sess || R.active)) keepAwake(true); });
+const baseTitle = document.title;
+
+/* =====================================================================
+   SENDER
+   ===================================================================== */
+const S = { files: [], expMin: 60, sess: null };
+
+function addFiles(list) {
+  let added = 0, skipped = 0;
+  for (const f of list) {
+    if (!f || typeof f.size !== 'number') continue;
+    if (S.files.length >= CFG.maxFiles) { skipped++; continue; }
+    const name = (f.bbPath || f.webkitRelativePath || f.name || 'file');
+    if (f.size === 0 && !f.type && !/\.[a-z0-9]{1,8}$/i.test(name)) { skipped++; continue; }   // likely a folder entry
+    S.files.push({ file: f, name, size: f.size, type: f.type || '' });
+    added++;
+  }
+  if (skipped) toast('Some items were skipped. You can send up to ' + CFG.maxFiles.toLocaleString() + ' files at once — zip bigger folders.', 4200);
+  if (added && S.sess) toast('Files added. Share again to include them.');
+  renderPicked();
+  if (added && !S.sess) { tabTo('send'); }
+}
+function renderPicked() {
+  const has = S.files.length > 0;
+  $('#picked').hidden = !has; $('#drop').hidden = has;
+  $('#go').disabled = !has;
+  const total = S.files.reduce((a, f) => a + f.size, 0);
+  $('#sum-n').textContent = plural(S.files.length, 'file'); $('#sum-s').textContent = fmtBytes(total);
+  $('#file-list').innerHTML = S.files.map((f, i) => {
+    const k = kindOf(f.name, f.type);
+    return `<li><span class="fi k-${k}">${icon(KIND_ICON[k])}</span><span class="fn"><b title="${esc(f.name)}">${esc(f.name)}</b><span>${fmtBytes(f.size)}</span></span><button class="iconbtn" type="button" data-rm="${i}" aria-label="Remove ${esc(f.name)}">${icon('i-x')}</button></li>`;
+  }).join('');
+}
+$('#file-list').addEventListener('click', (e) => { const b = e.target.closest('[data-rm]'); if (!b) return; S.files.splice(+b.dataset.rm, 1); renderPicked(); });
+$('#clear-all').onclick = () => { S.files = []; renderPicked(); };
+$('#add-files').onclick = () => $('#in-files').click();
+$('#add-more').onclick = () => $('#in-files').click();
+$('#add-folder').onclick = () => $('#in-folder').click();
+$('#in-files').onchange = (e) => { addFiles(e.target.files); e.target.value = ''; };
+$('#in-folder').onchange = (e) => { addFiles(e.target.files); e.target.value = ''; };
+$$('#exp-chips button').forEach(b => b.onclick = () => { $$('#exp-chips button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); S.expMin = +b.dataset.m; });
+$('#pw-eye').onclick = () => { const i = $('#o-pw'); const show = i.type === 'password'; i.type = show ? 'text' : 'password'; $('#pw-eye use').setAttribute('href', show ? '#i-eyeoff' : '#i-eye'); };
+try { $('#o-name').value = localStorage.getItem('bb-name') || ''; } catch (e) {}
+
+/* drag & drop (files and whole folders) */
+async function entriesToFiles(items) {
+  const out = [];
+  const walk = async (entry, path) => {
+    if (!entry) return;
+    if (entry.isFile) { await new Promise(r => entry.file(f => { try { Object.defineProperty(f, 'bbPath', { value: path + f.name }); } catch (e) {} out.push(f); r(); }, r)); }
+    else if (entry.isDirectory) {
+      const rd = entry.createReader(); let batch;
+      do { batch = await new Promise(r => rd.readEntries(r, () => r([]))); for (const e of batch) await walk(e, path + entry.name + '/'); } while (batch.length);
+    }
+  };
+  const ents = [...items].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+  for (const e of ents) await walk(e, '');
+  return out;
+}
+let dragN = 0;
+const canDrop = () => !$('#p-pick').hidden || !$('#p-enter').hidden || !$('#p-ended').hidden;
+window.addEventListener('dragenter', (e) => { if (!e.dataTransfer || ![...e.dataTransfer.types].includes('Files')) return; dragN++; if (canDrop()) $('#dropcover').classList.add('on'); });
+window.addEventListener('dragleave', () => { dragN = Math.max(0, dragN - 1); if (!dragN) $('#dropcover').classList.remove('on'); });
+window.addEventListener('dragover', (e) => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); });
+window.addEventListener('drop', async (e) => {
+  if (!e.dataTransfer || !e.dataTransfer.files.length) return;
+  e.preventDefault(); dragN = 0; $('#dropcover').classList.remove('on');
+  if (!canDrop()) return toast('Finish or stop this transfer first.');
+  if (S.sess) endShare(true);
+  if (!$('#p-ended').hidden) S.files = [];
+  let files = [];
+  try { if (e.dataTransfer.items && e.dataTransfer.items[0] && e.dataTransfer.items[0].webkitGetAsEntry) files = await entriesToFiles(e.dataTransfer.items); } catch (err) {}
+  if (!files.length) files = [...e.dataTransfer.files];
+  show('p-pick'); addFiles(files);
+});
+document.addEventListener('paste', (e) => {
+  if (e.target && /input|textarea/i.test(e.target.tagName)) return;
+  const fs = e.clipboardData && [...e.clipboardData.files];
+  if (fs && fs.length && canDrop()) { if (!$('#p-ended').hidden) S.files = []; show('p-pick'); addFiles(fs); }
+});
+
+/* ---- start sharing */
+$('#go').onclick = () => startShare();
+$('#again').onclick = () => startShare();
+$('#fresh').onclick = () => { retireOld(); S.files = []; renderPicked(); show('p-pick'); };
+
+async function startShare() {
+  if (!S.files.length) return;
+  retireOld();
+  const btn = $('#go'); btn.disabled = true;
+  const name = $('#o-name').value.trim(); try { localStorage.setItem('bb-name', name); } catch (e) {}
+  const pw = $('#o-pw').value;
+  const secret = randCode(12);
+  const key = await deriveKey(secret);
+  const room = (await sha256hex('beambeam/v1/room:' + secret)).slice(0, 24);
+  const sess = {
+    secret, key, room, pw, pwh: pw ? await sha256hex(secret + '\u0000' + pw) : '',
+    exp: Date.now() + S.expMin * 60000, start: Date.now(), dur: S.expMin * 60000,
+    from: name || ('Someone on ' + deviceLabel()), msg: $('#o-msg').value.trim(),
+    files: S.files.slice(), peers: new Map(), expired: false, ended: false
+  };
+  sess.total = sess.files.reduce((a, f) => a + f.size, 0);
+  sess.cum = []; let c = 0; for (const f of sess.files) { sess.cum.push(c); c += f.size; }
+  sess.base = `${CFG.topic}/${room}`;
+  sess.sig = new Signal(key, sess.base + '/s');
+  sess.sig.onMsg = (m, idx) => senderMsg(sess, m, idx).catch(e => console.warn(e));
+  sess.sig.onStatus = setNet;
+  sess.sig.start();
+  S.sess = sess;
+  btn.disabled = false;
+  renderLive(); show('p-live'); keepAwake(true); busy(true);
+  sess.tick = setInterval(() => senderTick(sess), 500);
+  senderTick(sess);
+}
+function shareLink(sess) { return `${SITE}#t=${Math.floor(sess.exp / 1000).toString(36)}${sess.pw ? '&p=1' : ''}&get=${sess.secret}`; }   // code last, so the link box shows it
+function renderLive() {
+  const sess = S.sess; const link = shareLink(sess);
+  $('#link').value = link;
+  $('#code').textContent = fmtCode(sess.secret);
+  $('#pw-note').hidden = !sess.pw;
+  $('#live-sub').textContent = plural(sess.files.length, 'file') + ' · ' + fmtBytes(sess.total) + (sess.pw ? ' · password' : '');
+  $('#qr').innerHTML = qrSvg(link);
+  const text = `${sess.from.startsWith('Someone') ? 'I' : sess.from} sent you ${plural(sess.files.length, 'file')} (${fmtBytes(sess.total)}) with Beam Beam. Download before the link expires:`;
+  $('#sh-wa').href = 'https://wa.me/?text=' + encodeURIComponent(text + ' ' + link);
+  $('#sh-tg').href = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text);
+  $('#sh-mail').href = 'mailto:?subject=' + encodeURIComponent('Files for you: ' + plural(sess.files.length, 'file') + ', ' + fmtBytes(sess.total)) + '&body=' + encodeURIComponent(text + '\n\n' + link + '\n\nOr open Beam Beam, tap Receive and enter the code ' + fmtCode(sess.secret) + (sess.pw ? ' (you’ll also need the password)' : '') + '.\n\nThe files come straight from my device, end-to-end encrypted.');
+  renderPeers();
+}
+$('#copy-link').onclick = async () => {
+  const b = $('#copy-link');
+  try { await navigator.clipboard.writeText($('#link').value); } catch (e) { $('#link').select(); document.execCommand('copy'); }
+  b.classList.add('ok'); b.querySelector('span').textContent = 'Copied'; b.querySelector('use').setAttribute('href', '#i-check');
+  setTimeout(() => { b.classList.remove('ok'); b.querySelector('span').textContent = 'Copy'; b.querySelector('use').setAttribute('href', '#i-copy'); }, 1800);
+};
+$('#link').onfocus = (e) => e.target.select();
+$('#sh-native').onclick = async () => {
+  const sess = S.sess; if (!sess) return;
+  const data = { title: 'Beam Beam', text: `${plural(sess.files.length, 'file')} (${fmtBytes(sess.total)}) for you — download before the link expires`, url: shareLink(sess) };
+  if (window.BeamNative && window.BeamNative.shareText) return window.BeamNative.shareText(data);
+  if (navigator.share) { try { await navigator.share(data); } catch (e) {} } else $('#copy-link').click();
+};
+$('#extend').onclick = () => {
+  const sess = S.sess; if (!sess || sess.ended) return;
+  sess.exp += 15 * 60000; sess.dur += 15 * 60000;
+  renderLive(); toast('Link extended by 15 minutes. The link and QR code were updated.');
+  sess.peers.forEach(p => sendTo(sess, p, { t: 'exp', exp: sess.exp }));
+};
+$('#stop').onclick = () => endShare(false);
+
+function senderTick(sess) {
+  if (S.sess !== sess) return;
+  const left = (sess.exp - Date.now()) / 1000;
+  if (!sess.expired) {
+    const sec = Math.max(0, Math.ceil(left));
+    if (sec >= 3600) { $('#cd').textContent = Math.floor(sec / 3600) + ':' + String(Math.floor(sec % 3600 / 60)).padStart(2, '0'); $('#cd-l').textContent = 'hrs left'; }
+    else { $('#cd').textContent = fmtClock(sec); $('#cd-l').textContent = 'left'; }
+    const frac = Math.max(0, Math.min(1, (sess.exp - Date.now()) / sess.dur));
+    $('#ring-fg').style.strokeDashoffset = String(238.76 * (1 - frac));
+    $('#ring').classList.toggle('low', left < 120);
+    if (left <= 0) { sess.expired = true; sess.peers.forEach(p => { if (!p.started) sendTo(sess, p, { t: 'expired' }); }); }
+  }
+  const active = [...sess.peers.values()].filter(p => p.state === 'sending' || p.state === 'connecting');
+  if (sess.expired && !active.length) { finishSession(sess, 'expired'); return; }
+  if (sess.expired) { $('#cd').textContent = '0:00'; }
+  // speed
+  const now = performance.now();
+  sess.peers.forEach(p => {
+    const b = peerBytes(sess, p);
+    if (p.lastT) { const dt = (now - p.lastT) / 1000; const inst = Math.max(0, (b - p.lastB) / dt); p.speed = p.speed ? p.speed * .7 + inst * .3 : inst; }
+    p.lastT = now; p.lastB = b; p.bytes = b;
+  });
+  renderPeers();
+  const sending = active.filter(p => p.state === 'sending');
+  document.title = sending.length ? `↑ ${Math.floor(100 * Math.min(...sending.map(p => p.bytes / Math.max(1, sess.total))))}% · Beam Beam` : baseTitle;
+}
+function peerBytes(sess, p) {
+  if (p.state === 'done') return sess.total;
+  if (p.mode === 'relay') return p.ackAbs || 0;
+  if (p.mode === 'p2p') return Math.max(p.fromAbs || 0, p.wAbs || 0);
+  return p.fromAbs || 0;
+}
+function renderPeers() {
+  const sess = S.sess; if (!sess) return;
+  const list = [...sess.peers.values()].filter(p => p.ok);
+  const done = list.filter(p => p.state === 'done').length;
+  $('#peer-count').textContent = list.length ? `${done} of ${list.length} finished` : '';
+  if (!list.length) {
+    $('#peers').innerHTML = sess.expired ? '<p class="waiting">Link expired. No new downloads.</p>' : '<p class="waiting"><span class="pulse"></span>Waiting for someone to open your link</p>';
+    return;
+  }
+  $('#peers').innerHTML = list.map(p => {
+    const pct = Math.floor(100 * (p.bytes || 0) / Math.max(1, sess.total));
+    let st;
+    if (p.state === 'done') st = `<span class="badge done">${icon('i-check')}Received</span>`;
+    else if (p.state === 'sending') st = `${pct}% · ${fmtBytes(p.speed || 0)}/s ${p.mode === 'p2p' ? `<span class="badge p2p">${icon('i-direct')}Direct</span>` : `<span class="badge relay">${icon('i-cloud')}Relay</span>`}`;
+    else if (p.state === 'connecting') st = 'Connecting…';
+    else if (p.state === 'paused') st = `Reconnecting… ${pct}% so far`;
+    else if (p.state === 'left') st = 'Left';
+    else st = 'Viewing the files';
+    return `<div class="peer"><span class="av">${icon(p.state === 'done' ? 'i-check' : /phone|ipad|tablet/i.test(p.name || '') ? 'i-phone' : 'i-laptop')}</span><span style="min-width:0"><b>${esc(p.name || 'Someone')}</b><span class="st">${st}</span>${p.state === 'sending' || p.state === 'paused' ? `<span class="fbar" style="display:block"><i style="width:${pct}%"></i></span>` : ''}</span></div>`;
+  }).join('');
+}
+function endShare(silent) {
+  const sess = S.sess; if (!sess) return;
+  sess.ended = true;
+  sess.peers.forEach(p => { sendTo(sess, p, { t: 'ended' }); closePeer(p); });
+  finishSession(sess, 'stopped', silent);
+}
+function finishSession(sess, why, silent) {
+  if (sess.done) return; sess.done = true;
+  clearInterval(sess.tick);
+  // keep listening so late visitors are told the link expired / was stopped
+  retireOld(); S.old = sess;
+  if (silent) setTimeout(() => retireOld(sess), 1500);
+  sess.peers.forEach(closePeer);
+  if (S.sess === sess) S.sess = null;
+  keepAwake(false); busy(false); document.title = baseTitle;
+  if (silent) return;
+  const got = [...sess.peers.values()].filter(p => p.state === 'done').length;
+  const who = got === 1 ? '1 person received your files.' : got + ' people received your files.';
+  $('#end-t').textContent = why === 'expired' ? 'Your link has expired' : 'You stopped sharing';
+  $('#end-p').textContent = why === 'expired'
+    ? (got ? who + ' The link and QR code no longer work. Share again if someone else needs them.' : 'No one downloaded the files in time. The link and QR code no longer work. Share again to get a fresh one.')
+    : (got ? who + ' The link and QR code are switched off. Share again whenever you need to.' : 'The link and QR code are switched off. Share again whenever you need to.');
+  $('#end-ico').className = 'big' + (got ? ' ok' : '');
+  $('#end-ico use').setAttribute('href', got ? '#i-check' : why === 'expired' ? '#i-clock' : '#i-x');
+  show('p-ended'); setNet(-1);
+}
+function sendTo(sess, p, obj) { return sess.sig.send(`${sess.base}/r/${p.id}`, obj); }
+function closePeer(p) {
+  p.sid = 'x' + rid(4);
+  try { p.dc && p.dc.close(); } catch (e) {}
+  try { p.pc && p.pc.close(); } catch (e) {}
+  p.dc = p.pc = null; clearTimeout(p.p2pTimer);
+}
+function retireOld(only) { const o = S.old; if (!o || (only && o !== only)) return; S.old = null; try { o.sig.end(); } catch (e) {} }
+async function senderMsg(sess, m, idx) {
+  if (!m || typeof m.peer !== 'string' || m.peer.length > 32 || !/^[a-z0-9]+$/.test(m.peer)) return;
+  if (sess.done) { if (m.t === 'hello') sess.sig.send(`${sess.base}/r/${m.peer}`, { t: sess.ended ? 'ended' : 'expired' }); return; }
+  let p = sess.peers.get(m.peer);
+  if (p) p.seen = Date.now();
+  if (m.t === 'hello') {
+    if (!p) { if (sess.peers.size > 200) return; p = { id: m.peer, state: 'new', fails: 0 }; sess.peers.set(m.peer, p); }
+    p.name = String(m.name || 'Someone').slice(0, 40); p.idx = idx; p.seen = Date.now();
+    if (sess.ended) return sendTo(sess, p, { t: 'ended' });
+    if (sess.expired && !p.started) return sendTo(sess, p, { t: 'expired' });
+    if (sess.pw && m.pwh !== sess.pwh) {
+      if (m.pwh) p.fails++;
+      if (p.fails > 8) return sendTo(sess, p, { t: 'blocked' });
+      return sendTo(sess, p, { t: 'locked', bad: !!m.pwh });
+    }
+    if (!p.ok) { p.ok = true; p.state = 'viewing'; }
+    sendTo(sess, p, { t: 'manifest', files: sess.files.map(f => ({ n: f.name, s: f.size, y: f.type })), exp: sess.exp, from: sess.from, msg: sess.msg });
+    renderPeers(); return;
+  }
+  if (!p || !p.ok) return;
+  if (m.t === 'want') {
+    if (sess.ended) return sendTo(sess, p, { t: 'ended' });
+    if (sess.expired && !p.started) return sendTo(sess, p, { t: 'expired' });
+    const busy = [...sess.peers.values()].filter(x => x !== p && (x.state === 'sending' || x.state === 'connecting')).length;
+    if (busy >= CFG.maxPeers) return sendTo(sess, p, { t: 'busy' });
+    closePeer(p);
+    p.started = true; p.sid = String(m.sid).slice(0, 24); p.idx = idx;
+    p.from = sess.files.map((f, i) => Math.max(0, Math.min(f.size, +((m.from || [])[i]) || 0)));
+    p.fromAbs = p.from.reduce((a, b) => a + b, 0);
+    p.sentBytes = 0; p.mode = ''; p.state = 'connecting';
+    renderPeers();
+    if (m.relay || !hasRTC || CFG.forceRelay) startRelay(sess, p); else startP2P(sess, p);
+    return;
+  }
+  if (m.sid !== p.sid) return;
+  if (m.t === 'answer' && p.pc) { try { await p.pc.setRemoteDescription(m.sdp); for (const c of (p.iceQ || [])) await p.pc.addIceCandidate(c).catch(() => {}); p.iceQ = []; } catch (e) {} }
+  else if (m.t === 'ice' && p.pc) { if (p.pc.remoteDescription) p.pc.addIceCandidate(m.c).catch(() => {}); else (p.iceQ = p.iceQ || []).push(m.c); }
+  else if (m.t === 'ack') { if (p.onAck) p.onAck(+m.a || 0); }
+  else if (m.t === 'done') { p.state = 'done'; closePeer(p); renderPeers(); toast(`${icon('i-check')} ${esc(p.name)} received everything`); notifyDone(p.name); }
+  else if (m.t === 'bye') { p.state = 'left'; closePeer(p); renderPeers(); }
+}
+function notifyDone(name) {
+  try { if (document.visibilityState !== 'visible' && 'Notification' in window && Notification.permission === 'granted') new Notification('Beam Beam', { body: name + ' received your files', icon: 'beambeam-icon-192.png' }); } catch (e) {}
+}
+
+/* ---- direct (WebRTC) */
+async function startP2P(sess, p) {
+  const sid = p.sid;
+  const pc = new RTCPeerConnection({ iceServers: iceServers() }); p.pc = pc; p.iceQ = [];
+  const dc = pc.createDataChannel('beam', { ordered: true }); dc.binaryType = 'arraybuffer'; p.dc = dc;
+  pc.onicecandidate = (e) => { if (e.candidate && p.sid === sid) sendTo(sess, p, { t: 'ice', sid, c: e.candidate.toJSON() }); };
+  p.p2pTimer = setTimeout(() => { if (p.sid === sid && p.mode !== 'p2p') { try { pc.close(); } catch (e) {} p.pc = p.dc = null; startRelay(sess, p); } }, CFG.p2pTimeout);
+  dc.onopen = () => { if (p.sid !== sid) return; clearTimeout(p.p2pTimer); p.mode = 'p2p'; p.state = 'sending'; p.wAbs = p.fromAbs; pumpP2P(sess, p, dc, sid); };
+  dc.onmessage = (e) => { if (typeof e.data !== 'string') return; try { const m = JSON.parse(e.data); if (m.t === 'w') { p.wAbs = Math.max(p.wAbs || 0, +m.a || 0); if (p.wWake) p.wWake(); } } catch (err) {} };
+  dc.onclose = () => { if (p.sid === sid && p.state === 'sending') { p.state = 'paused'; renderPeers(); } };
+  pc.onconnectionstatechange = () => { if (p.sid === sid && pc.connectionState === 'failed' && p.state === 'sending') { p.state = 'paused'; renderPeers(); } };
+  try {
+    await pc.setLocalDescription(await pc.createOffer());
+    sendTo(sess, p, { t: 'offer', sid, sdp: { type: pc.localDescription.type, sdp: pc.localDescription.sdp } });
+  } catch (e) { clearTimeout(p.p2pTimer); startRelay(sess, p); }
+}
+async function pumpP2P(sess, p, dc, sid) {
+  const max = (p.pc && p.pc.sctp && p.pc.sctp.maxMessageSize) || 65536;
+  const CH = Math.max(16384, Math.min(CFG.chunk, max));
+  const HIGH = 12 * 1024 * 1024;
+  dc.bufferedAmountLowThreshold = 2 * 1024 * 1024;
+  const waitLow = () => new Promise(r => { const t = setTimeout(done, 1000); function done() { clearTimeout(t); dc.removeEventListener('bufferedamountlow', done); r(); } dc.addEventListener('bufferedamountlow', done); });
+  const alive = () => p.sid === sid && dc.readyState === 'open';
+  const WIN = 32 * 1024 * 1024;   // never run more than 32 MB ahead of what the receiver has saved
+  const waitDisk = () => new Promise(r => { const t = setTimeout(done, 1500); function done() { clearTimeout(t); p.wWake = null; r(); } p.wWake = done; });
+  try {
+    for (let i = 0; i < sess.files.length; i++) {
+      const f = sess.files[i]; let off = p.from[i];
+      if (f.size === 0 || off >= f.size) continue;
+      dc.send(JSON.stringify({ t: 'f', i, o: off }));
+      while (off < f.size) {
+        const end = Math.min(f.size, off + 8 * 1024 * 1024);
+        const block = await f.file.slice(off, end).arrayBuffer();
+        for (let a = 0; a < block.byteLength; a += CH) {
+          while (alive() && dc.bufferedAmount > HIGH) await waitLow();
+          while (alive() && p.fromAbs + p.sentBytes - (p.wAbs || 0) > WIN) await waitDisk();
+          if (!alive()) return;
+          const piece = block.slice(a, Math.min(a + CH, block.byteLength));
+          dc.send(piece); p.sentBytes += piece.byteLength;
+        }
+        off = end;
+      }
+      if (!alive()) return;
+      dc.send(JSON.stringify({ t: 'e', i }));
+    }
+    if (alive()) dc.send(JSON.stringify({ t: 'fin' }));
+  } catch (e) { if (p.sid === sid) { p.state = 'paused'; renderPeers(); } }
+}
+
+/* ---- relay (encrypted chunks over MQTT with acknowledgements) */
+async function startRelay(sess, p) {
+  const sid = p.sid;
+  p.mode = 'relay'; p.state = 'sending';
+  p.ackAbs = p.fromAbs; let cur = p.fromAbs; let lastAck = Date.now(), dupes = 0;
+  let wakeUp = null;
+  p.onAck = (a) => {
+    if (a > p.ackAbs) { p.ackAbs = a; lastAck = Date.now(); dupes = 0; }
+    else if (a === p.ackAbs) { if (++dupes >= 3) { cur = p.ackAbs; dupes = 0; } }
+    if (wakeUp) wakeUp();
+  };
+  const idx = sess.sig.bestIdx(p.idx);
+  await sendTo(sess, p, { t: 'relay', sid, idx });
+  const W = CFG.relayWindow * CFG.relayChunk;
+  const total = sess.total;
+  const locate = (abs) => { for (let i = sess.files.length - 1; i >= 0; i--) if (abs >= sess.cum[i] && sess.files[i].size > 0 && abs < sess.cum[i] + sess.files[i].size) return i; return -1; };
+  let cache = null;   // { i, start, end, buf }
+  while (p.sid === sid && !sess.done) {
+    if (p.ackAbs >= total) break;
+    if (cur < p.ackAbs) cur = p.ackAbs;
+    if (cur < total && cur - p.ackAbs < W) {
+      const i = locate(cur); if (i < 0) { cur = total; continue; }
+      const f = sess.files[i]; const o = cur - sess.cum[i];
+      const len = Math.min(CFG.relayChunk, f.size - o);
+      if (!cache || cache.i !== i || o < cache.start || o + len > cache.end) {
+        const start = o, end = Math.min(f.size, o + 4 * 1024 * 1024);
+        cache = { i, start, end, buf: new Uint8Array(await f.file.slice(start, end).arrayBuffer()) };
+      }
+      const pkt = new Uint8Array(10 + len); const dv = new DataView(pkt.buffer);
+      dv.setUint16(0, i); dv.setUint32(2, Math.floor(o / 4294967296)); dv.setUint32(6, o >>> 0);
+      pkt.set(cache.buf.subarray(o - cache.start, o - cache.start + len), 10);
+      const ok = await sess.sig.sendBin(`${sess.base}/r/${p.id}`, pkt, sess.sig.bestIdx(idx));
+      if (!ok) await sleep(800);
+      cur += len; continue;
+    }
+    await new Promise(r => { wakeUp = r; setTimeout(r, 1200); }); wakeUp = null;
+    if (Date.now() - lastAck > 3000) { cur = p.ackAbs; lastAck = Date.now() - 1500; }   // nothing acknowledged lately: resend
+    if (Date.now() - (p.seen || 0) > 60000) { p.state = 'paused'; renderPeers(); return; }
+  }
+}
+
+/* =====================================================================
+   RECEIVER
+   ===================================================================== */
+const R = { active: false };
+
+function parseInvite(str) {
+  str = String(str || '');
+  let h = str.includes('#') ? str.slice(str.indexOf('#') + 1) : str;
+  const q = new URLSearchParams(h.replace(/^\?/, ''));
+  let code = cleanCode(q.get('get') || '');
+  if (!code && !/[=&]/.test(h)) code = cleanCode(h);
+  if (code.length !== 12 || [...code].some(ch => !ALPH.includes(ch))) return null;
+  const t = q.get('t'); const exp = t ? parseInt(t, 36) * 1000 : 0;
+  return { code, exp: isFinite(exp) ? exp : 0, pw: q.get('p') === '1' };
+}
+async function startReceive(inv) {
+  stopReceive(true);
+  tabTo('recv', true);
+  show('p-wait'); $('#wait-t').textContent = 'Finding the sender'; $('#wait-p').textContent = 'Connecting securely to their device…';
+  const key = await deriveKey(inv.code);
+  const room = (await sha256hex('beambeam/v1/room:' + inv.code)).slice(0, 24);
+  Object.assign(R, {
+    active: true, inv, key, room, peer: rid(12), base: `${CFG.topic}/${room}`, exp: inv.exp || 0,
+    files: null, F: null, mode: '', state: 'wait', pwh: '', retries: 0, q: Promise.resolve(), started: false
+  });
+  const sig = R.sig = new Signal(key, `${R.base}/r/${R.peer}`);
+  sig.onStatus = setNet;
+  sig.onMsg = (m, idx) => recvMsg(m, idx).catch(e => console.warn(e));
+  sig.onBin = (u8) => relayChunk(u8);
+  sig.onUp = () => hello();
+  sig.start();
+  const myGen = R.gen = rid(6);
+  const t0 = Date.now();
+  // keep knocking until the sender answers
+  (async () => {
+    while (R.active && R.gen === myGen && !R.files && R.state !== 'gone' && R.state !== 'pw') {
+      await sleep(2500);
+      if (!R.active || R.gen !== myGen || R.files || R.state === 'gone' || R.state === 'pw') break;
+      hello();
+      const waited = Date.now() - t0;
+      if (R.exp && Date.now() > R.exp && waited > 7000) { gone('expired'); break; }
+      if (waited > 9000) { $('#wait-t').textContent = 'Still looking'; $('#wait-p').textContent = sig.up() ? 'The sender’s page needs to be open. Ask them to keep it open, or check the code.' : 'Waiting for a network connection…'; }
+      if (waited > 45000) { gone('offline'); break; }
+    }
+  })();
+  R.tick = setInterval(recvTick, 500);
+}
+function hello() { if (R.active && R.sig) R.sig.send(`${R.base}/s`, { t: 'hello', peer: R.peer, name: deviceLabel().replace(/^an? /, '').replace(/^[a-hj-z]/, c => c.toUpperCase()), pwh: R.pwh || undefined }); }
+function toSender(obj) { obj.peer = R.peer; return R.sig && R.sig.send(`${R.base}/s`, obj); }
+function stopReceive(silent) {
+  if (!R.active) return;
+  if (!silent && R.sig && R.files && !R.done) toSender({ t: 'bye' });
+  R.active = false; R.gen = null; clearInterval(R.tick); clearTimeout(R.retryT); clearTimeout(R.wantT);
+  closeRx();
+  const sig = R.sig; R.sig = null; if (sig) setTimeout(() => sig.end(), 300);
+  if (R.F) R.F.forEach(f => { if (!f.done && f.sink) f.sink.abort(); });
+  keepAwake(false); document.title = baseTitle;
+}
+function closeRx() { try { R.dc && R.dc.close(); } catch (e) {} try { R.pc && R.pc.close(); } catch (e) {} R.dc = R.pc = null; }
+function gone(why) {
+  R.state = 'gone'; const t = $('#gone-t'), p = $('#gone-p');
+  $('#gone-retry').hidden = !(why === 'offline' || why === 'lost');
+  $('#gone-ic').querySelector('use').setAttribute('href', why === 'expired' ? '#i-clock' : why === 'locked' ? '#i-lock' : '#i-alert');
+  if (why === 'expired') { t.textContent = 'This link has expired'; p.textContent = 'Ask the sender to share the files again. They’ll get a fresh link in one tap.'; }
+  else if (why === 'ended') { t.textContent = 'The sender stopped sharing'; p.textContent = 'Ask them to share the files again if you still need them.'; }
+  else if (why === 'blocked') { t.textContent = 'Too many wrong passwords'; p.textContent = 'This device can’t open these files. Ask the sender to share again.'; }
+  else if (why === 'lost') { t.textContent = 'The connection was lost'; p.textContent = 'The sender may have closed their page. Your download can resume if they reopen it within the time limit.'; }
+  else { t.textContent = 'The sender isn’t reachable'; p.textContent = 'Their Beam Beam page needs to stay open. Check the code, or ask them to open it again.'; }
+  show('p-gone'); keepAwake(false);
+  if (why !== 'lost' && why !== 'offline') { const sig = R.sig; R.active = false; clearInterval(R.tick); if (sig) setTimeout(() => sig.end(), 300); R.sig = null; setNet(-1); }
+}
+$('#gone-retry').onclick = () => { if (R.inv) { if (R.F && R.files && !R.done) { R.active = true; R.retries = 0; R.state = 'ready'; show('p-rx'); requestFiles(); if (!R.tick) R.tick = setInterval(recvTick, 500); } else startReceive(R.inv); } };
+$('#gone-send').onclick = () => { stopReceive(true); history.replaceState(null, '', location.pathname + location.search); tabTo('send'); };
+$('#wait-cancel').onclick = () => { stopReceive(true); history.replaceState(null, '', location.pathname + location.search); tabTo('recv'); };
+
+async function recvMsg(m, idx) {
+  if (!R.active) return;
+  if (m.t === 'manifest') {
+    if (R.files) { if (m.exp) R.exp = m.exp; return; }
+    R.files = (m.files || []).slice(0, CFG.maxFiles).map(f => ({ n: String(f.n || 'file'), s: Math.max(0, +f.s || 0), y: String(f.y || '') }));
+    R.total = R.files.reduce((a, f) => a + f.s, 0);
+    R.cum = []; let c = 0; R.files.forEach(f => { R.cum.push(c); c += f.s; });
+    R.F = R.files.map(f => ({ name: f.n, size: f.s, type: f.y, got: 0, done: f.s === 0, sink: null, res: f.s === 0 ? { blob: new Blob([], { type: f.y }), name: f.n } : null }));
+    R.exp = +m.exp || R.exp; R.from = String(m.from || 'Someone'); R.msg = String(m.msg || '');
+    R.state = 'ready'; renderRx(); show('p-rx');
+    return;
+  }
+  if (m.t === 'locked') { R.state = 'pw'; show('p-pw'); $('#pw-err').hidden = !m.bad; setTimeout(() => $('#rx-pw').focus(), 50); return; }
+  if (m.t === 'blocked') return gone('blocked');
+  if (m.t === 'expired') { if (!R.done) gone('expired'); return; }
+  if (m.t === 'ended') { if (!R.done) gone('ended'); return; }
+  if (m.t === 'exp') { R.exp = +m.exp || R.exp; return; }
+  if (m.t === 'busy') { $('#rx-mode').textContent = 'The sender is busy with other downloads. Waiting…'; clearTimeout(R.retryT); R.retryT = setTimeout(requestFiles, 5000); return; }
+  if (m.sid !== R.sid) return;
+  if (m.t === 'offer') {
+    clearTimeout(R.wantT);
+    R.wantT = setTimeout(() => { if (R.active && !R.mode && !R.done) retrySoon(true); }, CFG.p2pTimeout + 6000);
+    closeRx();
+    const sid = R.sid;
+    const pc = R.pc = new RTCPeerConnection({ iceServers: iceServers() }); R.iceQ = [];
+    pc.onicecandidate = (e) => { if (e.candidate && R.sid === sid) toSender({ t: 'ice', sid, c: e.candidate.toJSON() }); };
+    pc.ondatachannel = (e) => setupDc(e.channel, sid);
+    pc.onconnectionstatechange = () => { if (R.sid === sid && (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') && !R.done) retrySoon(pc.connectionState === 'failed'); };
+    try {
+      await pc.setRemoteDescription(m.sdp);
+      for (const c of R.iceQ) await pc.addIceCandidate(c).catch(() => {}); R.iceQ = [];
+      await pc.setLocalDescription(await pc.createAnswer());
+      toSender({ t: 'answer', sid, sdp: { type: pc.localDescription.type, sdp: pc.localDescription.sdp } });
+    } catch (e) { R.p2pFailed = true; retrySoon(); }
+    return;
+  }
+  if (m.t === 'ice') { if (R.pc && R.pc.remoteDescription) R.pc.addIceCandidate(m.c).catch(() => {}); else (R.iceQ = R.iceQ || []).push(m.c); return; }
+  if (m.t === 'relay') { clearTimeout(R.wantT); closeRx(); R.p2pFailed = true; R.mode = 'relay'; R.relayIdx = m.idx; R.lastData = Date.now(); setRxState('receiving'); sendAck(); return; }
+}
+function setupDc(dc, sid) {
+  dc.binaryType = 'arraybuffer'; R.dc = dc;
+  dc.onopen = () => { if (R.sid !== sid) return; R.mode = 'p2p'; R.lastData = Date.now(); setRxState('receiving'); };
+  dc.onmessage = (e) => {
+    if (R.sid !== sid) return;
+    R.lastData = Date.now();
+    if (typeof e.data === 'string') {
+      let m; try { m = JSON.parse(e.data); } catch (err) { return; }
+      if (m.t === 'f') { R.cur = m.i; const F = R.F[m.i]; if (!F || m.o !== F.got) { retrySoon(); } }
+      else if (m.t === 'e') { const F = R.F[m.i]; if (F && F.got >= F.size) finishFile(m.i); else retrySoon(); }
+      return;
+    }
+    const F = R.F[R.cur]; if (!F || F.done) return;
+    writeChunk(R.cur, e.data);
+  };
+  dc.onclose = () => { if (R.sid === sid && !R.done && R.active) retrySoon(); };
+}
+function writeChunk(i, data) {
+  const F = R.F[i];
+  const n = data.byteLength;
+  if (F.got + n > F.size) return retrySoon();
+  F.got += n;
+  R.q = R.q.then(async () => {
+    if (!F.sink) F.sink = await makeSink(F.name, F.size, F.type);
+    await F.sink.write(data);
+    R.written += n;
+    if (R.written - (R.wSent || 0) >= 1048576 && R.dc && R.dc.readyState === 'open') { R.wSent = R.written; try { R.dc.send(JSON.stringify({ t: 'w', a: R.written })); } catch (e) {} }
+  }).catch(storageFail);
+}
+function finishFile(i) {
+  const F = R.F[i]; if (F.done) return; F.done = true;
+  R.q = R.q.then(async () => {
+    if (!F.sink) F.sink = await makeSink(F.name, F.size, F.type);
+    F.res = await F.sink.close(); F.sink = null;
+    saveResult(F.res); renderRx();
+  }).catch(storageFail);
+  checkAllDone();
+}
+function checkAllDone() {
+  if (!R.F || !R.F.every(f => f.done)) return;
+  R.q = R.q.then(() => {
+    if (R.done) return; R.done = true;
+    R.F.forEach(f => { if (f.size === 0) saveResult(f.res); });
+    toSender({ t: 'done', sid: R.sid }); setRxState('done'); keepAwake(false);
+  });
+}
+let failedOnce = false;
+function storageFail(e) {
+  console.warn(e); if (failedOnce) return; failedOnce = true;
+  toast('Couldn’t save the file. Free up some storage, then try again.', 6000);
+  stopReceive(); gone('lost');
+}
+function absGot() { let a = 0; for (const f of R.F) { if (!f.done && f.got < f.size) return a + f.got; a += f.size; } return a; }
+let ackTimer = null, since = 0;
+function sendAck() { clearTimeout(ackTimer); ackTimer = null; since = 0; R.lastAckT = Date.now(); if (R.active) toSender({ t: 'ack', sid: R.sid, a: absGot() }); }
+function relayChunk(u8) {
+  if (!R.active || R.mode !== 'relay' || !R.F || u8.length < 10) return;
+  R.lastData = Date.now();
+  const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+  const i = dv.getUint16(0), o = dv.getUint32(2) * 4294967296 + dv.getUint32(6);
+  const F = R.F[i]; if (!F) return;
+  if (F.done || R.cum[i] + o !== absGot()) { if (++since % 6 === 0) sendAck(); return; }   // duplicate or out of order
+  writeChunk(i, u8.slice(10));
+  if (F.got >= F.size) finishFile(i);
+  if (++since >= 6 || R.F.every(f => f.done)) sendAck(); else if (!ackTimer) ackTimer = setTimeout(sendAck, 250);
+}
+function requestFiles() {
+  if (!R.active || !R.F || R.done) return;
+  clearTimeout(R.retryT); closeRx();
+  R.sid = rid(10); R.mode = ''; R.started = true;
+  R.written = R.F.reduce((a, f) => a + f.got, 0); R.wSent = R.written;
+  if (R.F.every(f => f.done)) { checkAllDone(); return; }
+  setRxState('connecting');
+  toSender({ t: 'want', sid: R.sid, from: R.F.map(f => f.got), relay: !!(R.p2pFailed || !hasRTC) });
+  clearTimeout(R.wantT);
+  R.wantT = setTimeout(() => { if (R.active && !R.mode && !R.done) retrySoon(); }, CFG.p2pTimeout + 8000);
+}
+function retrySoon(p2pBroken) {
+  if (!R.active || R.done || R.retryT) return;
+  if (p2pBroken) R.p2pFailed = true;
+  closeRx(); R.mode = ''; R.retries++;
+  if (R.retries > 10) { R.retryT = null; return gone('lost'); }
+  setRxState('reconnecting');
+  // wait for queued writes so offsets are exact, then ask again from where we are
+  R.retryT = setTimeout(() => { R.q.then(() => { R.retryT = null; requestFiles(); }); }, Math.min(8000, 700 * 2 ** Math.min(R.retries, 4)));
+}
+function busy(on) { document.documentElement.classList.toggle('busy', !!on); }
+function setRxState(s) { R.state = s; busy(s !== 'ready' && s !== 'done'); if (s === 'receiving') R.retries = Math.max(0, R.retries - 1); renderRx(); }
+$('#rx-go').onclick = async () => {
+  if (R.done) { R.F.forEach(f => saveResult(f.res)); return; }
+  if (R.state !== 'ready') { // cancel
+    toSender({ t: 'bye' }); closeRx(); clearTimeout(R.retryT); R.retryT = null; R.mode = '';
+    R.F.forEach(f => { if (!f.done && f.sink) { f.sink.abort(); f.sink = null; } if (!f.done) f.got = 0; });
+    R.q = Promise.resolve(); R.state = 'ready'; renderRx(); keepAwake(false); return;
+  }
+  try {
+    if (navigator.storage && navigator.storage.estimate && R.total > 2e9) {
+      const est = await navigator.storage.estimate(); const free = (est.quota || 0) - (est.usage || 0);
+      if (free && free < R.total * 1.05) toast('This device may not have enough free space for ' + fmtBytes(R.total) + '.', 5000);
+    }
+  } catch (e) {}
+  if ('Notification' in window && Notification.permission === 'default' && R.total > 5e8) { try { Notification.requestPermission(); } catch (e) {} }
+  keepAwake(true); requestFiles();
+};
+$('#rx-back').onclick = () => { stopReceive(true); history.replaceState(null, '', location.pathname + location.search); tabTo('send'); };
+$('#pw-go').onclick = async () => {
+  const pw = $('#rx-pw').value; if (!pw) return;
+  R.pwh = await sha256hex(R.inv.code + '\u0000' + pw); R.state = 'wait';
+  show('p-wait'); $('#wait-t').textContent = 'Checking the password'; $('#wait-p').textContent = '';
+  hello();
+  setTimeout(() => { if (R.active && R.state === 'wait' && !R.files) hello(); }, 2500);
+};
+$('#rx-pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#pw-go').click(); });
+
+function renderRx() {
+  if (!R.F) return;
+  $('#rx-from').textContent = R.from + ' sent you files';
+  $('#rx-sum').textContent = plural(R.F.length, 'file') + ' · ' + fmtBytes(R.total);
+  $('#rx-msg').hidden = !R.msg; $('#rx-msg').textContent = R.msg;
+  $('#rx-list').innerHTML = R.F.map((f, i) => {
+    const k = kindOf(f.name, f.type); const pct = f.size ? Math.floor(100 * f.got / f.size) : 100;
+    const fin = f.done && (f.size > 0 || R.state === 'done');
+    const showBar = R.state !== 'ready';
+    return `<li><span class="fi k-${k}">${icon(KIND_ICON[k])}</span><span class="fn"><b title="${esc(f.name)}">${esc(f.name)}</b><span>${fin ? (f.res ? (f.res.saved ? 'Saved to ' + esc(f.res.where || 'your device') : 'Saved to Downloads') : 'Saving…') : fmtBytes(f.size)}</span>${showBar ? `<span class="fbar${fin ? ' done' : ''}"><i style="width:${fin ? 100 : pct}%"></i></span>` : ''}</span>${fin && f.res ? `<button class="iconbtn" type="button" data-save="${i}" aria-label="Save ${esc(f.name)} again">${icon(f.res.saved ? 'i-share' : 'i-get')}</button>` : '<span></span>'}</li>`;
+  }).join('');
+  const st = R.state; const go = $('#rx-go'), gt = $('#rx-go-t');
+  $('#rx-prog').hidden = st === 'ready';
+  $('#rx-done').hidden = st !== 'done';
+  go.classList.toggle('sun', false);
+  go.hidden = false;
+  if (st === 'ready') { gt.textContent = R.F.length > 1 ? 'Download all · ' + fmtBytes(R.total) : 'Download · ' + fmtBytes(R.total); go.querySelector('use').setAttribute('href', '#i-get'); go.className = 'go'; }
+  else if (st === 'done') { gt.textContent = R.F.length > 1 ? 'Save all again' : 'Save again'; go.className = 'ghost'; go.style.width = '100%'; go.style.marginTop = '14px'; go.querySelector('use').setAttribute('href', '#i-get'); }
+  else { gt.textContent = 'Cancel'; go.className = 'ghost'; go.style.width = '100%'; go.style.marginTop = '14px'; go.querySelector('use').setAttribute('href', '#i-x'); }
+  if (st === 'ready') { go.style.width = ''; go.style.marginTop = ''; }
+  $('#rx-fine').hidden = st === 'done';
+  $('#rx-exp-box').hidden = st === 'done' || !R.exp;
+  updRxProgress();
+}
+$('#rx-list').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-save]'); if (!b) return; const F = R.F[+b.dataset.save];
+  if (F.res && F.res.saved && window.BeamNative && window.BeamNative.open) window.BeamNative.open(F.res); else saveResult(F.res);
+});
+function updRxProgress() {
+  if (!R.F) return;
+  const got = Math.min(R.total, R.written || 0);
+  const pct = R.total ? Math.floor(100 * got / R.total) : 100;
+  $('#rx-bar').style.width = (R.state === 'done' ? 100 : pct) + '%';
+  $('#rx-pct').textContent = (R.state === 'done' ? 100 : pct) + '%';
+  const sp = R.speed || 0;
+  let line;
+  if (R.state === 'done') line = 'All files received';
+  else if (R.state === 'connecting') line = R.p2pFailed ? 'Connecting through the relay…' : 'Opening a direct connection…';
+  else if (R.state === 'reconnecting') line = 'Connection dropped. Resuming…';
+  else line = `${fmtBytes(got)} of ${fmtBytes(R.total)} · ${fmtBytes(sp)}/s · ${fmtEta((R.total - got) / sp)}`;
+  $('#rx-speed').textContent = line;
+  $('#rx-mode').innerHTML = R.mode === 'p2p' ? `<span class="badge p2p">${icon('i-direct')}Direct</span>` : R.mode === 'relay' ? `<span class="badge relay">${icon('i-cloud')}Relay</span>` : R.state === 'done' ? `<span class="badge done">${icon('i-check')}Done</span>` : '';
+  if (R.state === 'receiving') document.title = `↓ ${pct}% · Beam Beam`; else if (R.state === 'done') document.title = '✓ Received · Beam Beam';
+}
+function recvTick() {
+  if (!R.active) return;
+  if (R.exp && R.state !== 'done') {
+    const left = (R.exp - Date.now()) / 1000;
+    $('#rx-exp').textContent = fmtClock(left);
+    if (left <= 0 && R.state === 'ready') gone('expired');
+  }
+  if (!R.F) return;
+  const now = performance.now(); const got = R.written || 0;
+  if (R.lastT) { const inst = Math.max(0, (got - R.lastB) / ((now - R.lastT) / 1000)); R.speed = R.speed ? R.speed * .75 + inst * .25 : inst; }
+  R.lastT = now; R.lastB = got;
+  if (R.state === 'receiving' && Date.now() - (R.lastData || 0) > 15000) retrySoon(R.mode === 'p2p');
+  if (R.state === 'receiving' && R.mode === 'relay' && Date.now() - (R.lastData || 0) > 2500 && Date.now() - (R.lastAckT || 0) > 1500) sendAck();
+  if (R.state === 'receiving' || R.state === 'connecting' || R.state === 'reconnecting') { updRxProgress(); if (Math.random() < .5) renderFileBars(); }
+}
+function renderFileBars() { $$('#rx-list li').forEach((li, i) => { const F = R.F[i]; const bar = li.querySelector('.fbar i'); if (bar && F) bar.style.width = (F.size ? Math.floor(100 * F.got / F.size) : 100) + '%'; }); }
+
+/* ---- receive tab: code entry + QR scanning */
+$('#code-go').onclick = () => {
+  const inv = parseInvite($('#code-in').value);
+  $('#code-err').hidden = !!inv;
+  if (inv) { history.replaceState(null, '', '#get=' + inv.code); startReceive(inv); }
+};
+$('#code-in').addEventListener('input', (e) => {
+  const v = e.target.value; if (/[#=]/.test(v)) return;
+  const c = cleanCode(v).slice(0, 12); const f = fmtCode(c);
+  if (f !== v) e.target.value = f;
+  $('#code-err').hidden = true;
+});
+$('#code-in').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#code-go').click(); });
+let scanStream = null, scanLoop = null;
+$('#scan').onclick = async () => {
+  const sheet = $('#sheet-scan'); sheet.classList.add('open');
+  const v = $('#scan-v');
+  try {
+    scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+    v.srcObject = scanStream; await v.play();
+  } catch (e) { $('#scan-p').textContent = 'Camera access was blocked. Allow the camera for this site, or type the code instead.'; return; }
+  let detector = null;
+  if ('BarcodeDetector' in window) { try { detector = new BarcodeDetector({ formats: ['qr_code'] }); } catch (e) {} }
+  if (!detector && typeof jsQR === 'undefined') await loadScript('lib/jsQR.js').catch(() => {});
+  const cv = document.createElement('canvas'); const cx = cv.getContext('2d', { willReadFrequently: true });
+  const found = (txt) => { const inv = parseInvite(txt); if (!inv) return false; closeScan(); history.replaceState(null, '', '#get=' + inv.code + (inv.exp ? '&t=' + Math.floor(inv.exp / 1000).toString(36) : '') + (inv.pw ? '&p=1' : '')); startReceive(inv); return true; };
+  scanLoop = setInterval(async () => {
+    if (!v.videoWidth) return;
+    try {
+      if (detector) { const r = await detector.detect(v); if (r[0] && found(r[0].rawValue)) return; }
+      else if (typeof jsQR === 'function') {
+        const w = 480, h = Math.round(480 * v.videoHeight / v.videoWidth); cv.width = w; cv.height = h; cx.drawImage(v, 0, 0, w, h);
+        const r = jsQR(cx.getImageData(0, 0, w, h).data, w, h, { inversionAttempts: 'dontInvert' }); if (r && found(r.data)) return;
+      }
+    } catch (e) {}
+  }, 220);
+};
+function closeScan() { clearInterval(scanLoop); if (scanStream) scanStream.getTracks().forEach(t => t.stop()); scanStream = null; $('#sheet-scan').classList.remove('open'); $('#scan-p').textContent = 'Point your camera at the code on the sender’s screen.'; }
+$('#scan-close').onclick = closeScan;
+function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+
+/* ---- tabs */
+function tabTo(which, quiet) {
+  if (which === 'send') {
+    if (R.active && R.state !== 'done' && R.started && !quiet && !confirm('Stop receiving these files?')) return;
+    if (R.active) stopReceive();
+    show(S.sess ? 'p-live' : 'p-pick');
+    if (!S.sess) setNet(-1);
+  } else {
+    if (S.sess && !quiet) { toast('You’re sharing a link. Stop sharing first, or open Beam Beam in another tab to receive.', 4200); return; }
+    if (!R.active) { show('p-enter'); setNet(-1); }
+    else show(R.state === 'gone' ? 'p-gone' : R.files ? 'p-rx' : R.state === 'pw' ? 'p-pw' : 'p-wait');
+  }
+}
+$('#tab-send').onclick = () => tabTo('send');
+$('#tab-recv').onclick = () => tabTo('recv');
+window.addEventListener('beforeunload', (e) => {
+  if ((S.sess && [...S.sess.peers.values()].some(p => p.state === 'sending' || p.state === 'connecting' || p.state === 'viewing')) || (R.active && R.started && !R.done)) { e.preventDefault(); e.returnValue = ''; }
+});
+window.addEventListener('pagehide', () => { if (R.active && R.files && !R.done) toSender({ t: 'bye' }); });
+window.addEventListener('online', () => setNet(S.sess ? S.sess.sig.up() : R.sig ? R.sig.up() : -1, CFG.brokers.length));
+window.addEventListener('offline', () => setNet(0, CFG.brokers.length));
+
+/* ------------------------------------------------------------ QR code as crisp SVG with the logo */
+function qrSvg(text) {
+  if (typeof qrcode !== 'function') return '';
+  const q = qrcode(0, 'Q'); q.addData(text); q.make();
+  const n = q.getModuleCount(), pad = 1, S2 = n + pad * 2;
+  const finder = (r, c) => (r < 7 && c < 7) || (r < 7 && c >= n - 7) || (r >= n - 7 && c < 7);
+  const lw = Math.round(n * 0.24) | 1, l0 = (n - lw) / 2;
+  const inLogo = (r, c) => r >= l0 - .5 && r < l0 + lw + .5 && c >= l0 - .5 && c < l0 + lw + .5;
+  let d = '';
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    if (!q.isDark(r, c) || finder(r, c) || inLogo(r, c)) continue;
+    const x = c + pad + .08, y = r + pad + .08; d += `M${x + .42} ${y}h0a.42 .42 0 0 1 0 .84h0a.42 .42 0 0 1 0-.84z`;
+  }
+  const fp = (r, c) => { const x = c + pad, y = r + pad; return `<rect x="${x + .5}" y="${y + .5}" width="6" height="6" rx="1.9" fill="none" stroke="#0E1630" stroke-width="1"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" rx=".9" fill="#2638E8"/>`; };
+  const lx = l0 + pad, ly = l0 + pad;
+  return `<svg viewBox="0 0 ${S2} ${S2}" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision"><rect width="${S2}" height="${S2}" fill="#fff"/><path d="${d}" fill="#0E1630"/>${fp(0, 0)}${fp(0, n - 7)}${fp(n - 7, 0)}<g transform="translate(${lx} ${ly}) scale(${lw / 64})"><use href="#logo"/></g></svg>`;
+}
+
+/* ------------------------------------------------------------ startup */
+function route() {
+  const inv = location.hash.includes('get=') ? parseInvite(location.hash) : null;
+  if (inv) { startReceive(inv); return true; }
+  if (/[?&]receive\b/.test(location.search)) { tabTo('recv', true); return true; }
+  return false;
+}
+window.addEventListener('hashchange', () => { if (location.hash.includes('get=')) route(); });
+renderPicked();
+if (!route()) { show('p-pick'); setNet(-1); }
+cleanInbox();
+
+/* files shared into the installed app (Android share sheet → service worker) */
+(async () => {
+  const m = /[?&]shared=(\d+)/.exec(location.search); if (!m || !('caches' in window)) return;
+  try {
+    const c = await caches.open('bb-share'); const keys = await c.keys(); const files = [];
+    for (const k of keys) { const r = await c.match(k); const b = await r.blob(); files.push(new File([b], decodeURIComponent(r.headers.get('x-name') || 'file'), { type: b.type })); await c.delete(k); }
+    if (files.length) { tabTo('send', true); addFiles(files); }
+    history.replaceState(null, '', location.pathname + (isApp ? '?app' : ''));
+  } catch (e) {}
+})();
+/* files opened with the installed desktop web app */
+if ('launchQueue' in window) launchQueue.setConsumer(async (p) => { if (p.files && p.files.length) { const fs = await Promise.all(p.files.map(h => h.getFile())); tabTo('send', true); addFiles(fs); } });
+
+window.BeamApp = { addFiles, toast, version: '1.0.0', config: CFG, site: SITE };
+})();
+</script>
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s), $$ = (s) => [...document.querySelectorAll(s)];
+const isApp = document.documentElement.classList.contains('app');
+const native = !!(window.beamDesktop || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()));
+
+/* ---------- service worker (installable + offline shell) */
+if ('serviceWorker' in navigator && !native && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+}
+
+/* ---------- header shadow */
+const bar = $('#top-bar');
+const onScroll = () => bar.classList.toggle('scrolled', scrollY > 8);
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+$('#final-go') && ($('#final-go').onclick = (e) => { e.preventDefault(); scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => { const b = $('#add-files'); b && !b.closest('[hidden]') && b.focus(); }, 500); });
+
+/* ---------- install */
+const ua = navigator.userAgent;
+const plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+const mine = /android/i.test(ua) ? 'android'
+  : (/iPad|iPhone|iPod/.test(ua) || (/Mac/.test(plat) && navigator.maxTouchPoints > 1)) ? 'ios'
+  : (/Win/i.test(plat) || /Windows/i.test(ua)) ? 'windows'
+  : (/Mac/i.test(plat) || /Macintosh/.test(ua)) ? 'mac'
+  : /Linux|X11|CrOS/i.test(plat + ' ' + ua) ? 'linux' : 'web';
+let deferred = null;
+addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferred = e; $('#install-btn').lastChild.textContent = 'Install app'; });
+addEventListener('appinstalled', () => { deferred = null; window.BeamApp && BeamApp.toast('Beam Beam is installed. Find it with your other apps.'); });
+$('#install-btn').onclick = async () => {
+  if (deferred) { deferred.prompt(); try { await deferred.userChoice; } catch (e) {} deferred = null; return; }
+  if (mine === 'ios') { $('#sheet-ios').classList.add('open'); return; }
+  location.hash = '#apps';
+};
+$('#ios-ok').onclick = () => $('#sheet-ios').classList.remove('open');
+$$('.sheet-bg').forEach(s => s.addEventListener('click', (e) => { if (e.target === s && s.id !== 'sheet-scan') s.classList.remove('open'); }));
+addEventListener('keydown', (e) => { if (e.key === 'Escape') $$('.sheet-bg.open').forEach(s => { if (s.id === 'sheet-scan') $('#scan-close').click(); else s.classList.remove('open'); }); });
+
+if (isApp) return;   // everything below is the product page only
+
+/* ---------- demo video: plays when visible, three cuts */
+const vid = $('#demo-video'), vbox = $('#video-box');
+$$('.vtabs button').forEach(b => b.addEventListener('click', () => {
+  $$('.vtabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  vbox.classList.toggle('vert', b.hasAttribute('data-vert'));
+  vid.poster = b.dataset.p; vid.src = b.dataset.v; vid.muted = true; vid.play().catch(() => {});
+}));
+if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  new IntersectionObserver((es) => es.forEach(x => { if (x.isIntersecting) vid.play().catch(() => {}); else vid.pause(); }), { threshold: .35 }).observe(vbox);
+}
+
+/* ---------- apps: device-aware download grid backed by GitHub Releases */
+const host = location.hostname, seg = location.pathname.split('/').filter(Boolean), gh = /\.github\.io$/.test(host);
+const REPO = (gh ? host.split('.')[0] : 'harshavarthanep') + '/' + (gh && seg.length && !/\.html?$/.test(seg[0]) ? seg[0] : 'BeamBeam');
+const LATEST = 'https://github.com/' + REPO + '/releases/latest/download/';
+$('#gh-link').href = 'https://github.com/' + REPO;
+const P = {
+  windows: { name: 'Windows', icon: 'i-win', req: 'Windows 10 or 11, Intel, AMD or ARM',
+    files: [{ label: 'Download installer', asset: 'BeamBeam-Setup-x64.exe' }, { label: 'Portable, no install', asset: 'BeamBeam-Portable.exe' }, { label: 'Windows on ARM', asset: 'BeamBeam-Setup-arm64.exe' }],
+    steps: ['Open <b>BeamBeam-Setup-x64.exe</b> from your Downloads.', 'If Windows shows “Windows protected your PC”, click <b>More info</b>, then <b>Run anyway</b>.', 'Beam Beam opens and is added to the Start menu.'] },
+  mac: { name: 'macOS', icon: 'i-mac', req: 'macOS 11 or later, Apple silicon and Intel',
+    files: [{ label: 'Download for Mac', asset: 'BeamBeam-Mac.dmg' }],
+    steps: ['Open <b>BeamBeam-Mac.dmg</b> and drag Beam Beam into <b>Applications</b>.', 'Open Beam Beam from Applications.', 'If macOS can’t check the developer, open <b>System Settings › Privacy &amp; Security</b> and click <b>Open Anyway</b>. You only do this once.'] },
+  linux: { name: 'Linux', icon: 'i-linux', req: '64-bit Ubuntu, Debian, Fedora and others',
+    files: [{ label: 'Download .deb for Ubuntu/Debian', asset: 'BeamBeam-Linux.deb' }, { label: 'Download AppImage', asset: 'BeamBeam-Linux.AppImage' }],
+    steps: ['<b>.deb:</b> double-click it, or run <code>sudo apt install ./BeamBeam-Linux.deb</code>.', '<b>AppImage:</b> right-click › Properties › allow running as a program, then double-click.', 'Find Beam Beam in your app menu.'] },
+  android: { name: 'Android', icon: 'i-android', req: 'Android 7.0 or later',
+    files: [{ label: 'Download APK', asset: 'BeamBeam-Android.apk' }],
+    steps: ['Open <b>BeamBeam-Android.apk</b> from your notifications or Downloads.', 'If asked, allow your browser to <b>install unknown apps</b>.', 'Tap <b>Install</b>. Received files are saved in Documents › Beam Beam.'] },
+  ios: { name: 'iPhone & iPad', icon: 'i-phone', req: 'iOS and iPadOS 16.4 or later, in Safari', web: true,
+    steps: ['Open Beam Beam in <b>Safari</b>.', 'Tap the <b>Share</b> button.', 'Tap <b>Add to Home Screen</b>. Beam Beam now opens full-screen.'] },
+  web: { name: 'Web app', icon: 'i-globe', req: 'Chrome, Edge, Firefox, Safari, Samsung Internet', web: true,
+    steps: ['Use it right here. Nothing to install.', 'In Chrome or Edge, click <b>Install</b> in the address bar to get Beam Beam in its own window.'] }
+};
+let release = null, state = 'loading';
+const fmtSize = (b) => b >= 1e6 ? Math.round(b / 1e6) + ' MB' : Math.max(1, Math.round(b / 1e3)) + ' KB';
+function asset(name) {
+  if (state === 'loading') return null;
+  if (state === 'none') return { ok: false };
+  if (state === 'unknown') return { url: LATEST + name, ok: true };
+  const a = (release.assets || []).find(x => x.name === name);
+  return a ? { url: a.browser_download_url, size: a.size, ok: true } : { ok: false };
+}
+const metaFor = (a) => !a ? '<span class="skel"></span>' : a.ok ? (a.size ? fmtSize(a.size) : '') : 'Coming soon';
+const order = ['windows', 'mac', 'linux', 'android', 'ios', 'web'].sort((a, b) => (b === mine) - (a === mine));
+function render() {
+  $('#dl-grid').innerHTML = order.map(id => {
+    const p = P[id];
+    const btns = p.web
+      ? (id === 'ios' ? `<button class="btn btn-primary" type="button" data-ios>Add to Home Screen</button>` : `<button class="btn btn-primary" type="button" data-pwa>Install the web app</button>`)
+      : p.files.map((f, i) => { const a = asset(f.asset); return `<button class="btn ${i ? 'btn-ghost' : 'btn-primary'}" type="button" data-platform="${id}" data-asset="${i}"${a && !a.ok ? ' disabled' : ''}><span class="lbl">${f.label}</span> <span class="meta">${metaFor(a)}</span></button>`; }).join('');
+    return `<div class="os${id === mine ? ' mine' : ''}"><span class="tag">Your device</span><div class="top2"><span class="oi"><svg class="ic"><use href="#${p.icon}"/></svg></span><h3>${p.name}</h3></div><p class="req">${p.req}</p><div class="btns">${btns}</div><details><summary>How to install</summary><ol>${p.steps.map(s => `<li>${s}</li>`).join('')}</ol></details></div>`;
+  }).join('');
+  const el = $('#release');
+  if (state === 'ok') { const d = new Date(release.published_at || release.created_at); el.innerHTML = `<i class="dot on"></i>Latest <b>${release.name || release.tag_name}</b>, ${d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}`; }
+  else if (state === 'none') el.innerHTML = '<i class="dot"></i>Desktop and Android apps are on their way. The web app works today.';
+  else el.innerHTML = `<a href="https://github.com/${REPO}/releases">See all releases</a>`;
+}
+render();
+fetch('https://api.github.com/repos/' + REPO + '/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+  .then(r => { if (r.status === 404) { state = 'none'; return null; } if (!r.ok) throw 0; return r.json(); })
+  .then(j => { if (j) { release = j; state = 'ok'; } })
+  .catch(() => { state = 'unknown'; })
+  .then(render);
+
+const sheet = $('#sheet-dl');
+document.addEventListener('click', (e) => {
+  const ios = e.target.closest('[data-ios]'); if (ios) { $('#sheet-ios').classList.add('open'); return; }
+  const pwa = e.target.closest('[data-pwa]'); if (pwa) { $('#install-btn').click(); if (!deferred && mine !== 'ios') window.BeamApp && BeamApp.toast('Open the browser menu and choose Install Beam Beam or Add to Home screen.', 4500); return; }
+  const b = e.target.closest('button[data-platform]'); if (!b || b.disabled) return;
+  const p = P[b.dataset.platform], f = p.files[+b.dataset.asset || 0];
+  const a = asset(f.asset) || { url: LATEST + f.asset, ok: true }; if (!a.ok) return;
+  $('#dl-t').textContent = 'Beam Beam for ' + p.name;
+  $('#dl-file').textContent = f.asset + (a.size ? ', ' + fmtSize(a.size) : '');
+  $('#dl-steps').innerHTML = p.steps.map(s => `<li>${s}</li>`).join('');
+  $('#dl-retry').href = a.url;
+  $('#dl-state').innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2.5px;margin:0;display:inline-block;vertical-align:-3px"></span> Starting your download…';
+  sheet.classList.add('open');
+  setTimeout(() => { location.href = a.url; }, 600);
+  setTimeout(() => { $('#dl-state').innerHTML = '<svg class="ic" style="color:var(--ok)"><use href="#i-check"/></svg> Your download has started. Check your Downloads folder.'; }, 1800);
+});
+$('#dl-close').onclick = () => sheet.classList.remove('open');
+})();
+</script>
+</body>
+</html>

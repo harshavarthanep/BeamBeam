@@ -53,7 +53,7 @@ Designed and built by **H24 Creationz** · made with ❤ by Harsha Varthan E P.
 
 ## How a transfer works
 
-1. The sender adds files and gets a link like `…/BeamBeam/#get=K7Q29MXA2PAT&t=…`.
+1. The sender adds files and gets a link like `…/BeamBeam/#t=…&get=K7Q29MXA2PAT` (the code sits at the end so the link box shows it).
    The part after `#` never reaches any server. It holds the secret 12-character code (shown on screen for typing).
 2. Both devices derive an **AES-256 key** and a private room from that code, then meet on several public MQTT relays at once
    (whichever answers first wins). Every message is encrypted, so the relays only ever see scrambled bytes.
@@ -62,7 +62,7 @@ Designed and built by **H24 Creationz** · made with ❤ by Harsha Varthan E P.
    (one relay runs on port 443, the normal HTTPS port, for strict office networks).
 5. The receiver writes straight to disk as data arrives, tells the sender what has been **saved** (the sender never runs
    more than 32 MB ahead), and **resumes from the last saved byte** after any drop.
-6. The link **expires** at the time the sender chose. New visitors see "expired"; downloads already running may finish.
+6. The link **expires** at the time the sender chose. New visitors see "expired" (the sender's page keeps answering them until a new share starts); downloads already running may finish.
 
 **Important for users:** the sender's page must stay open until the receiver finishes — that is what makes it free,
 private and unlimited. The app keeps the screen awake and warns before closing.
