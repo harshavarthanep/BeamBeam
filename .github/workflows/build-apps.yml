@@ -1,17 +1,27 @@
 # Beam Beam — builds the Windows, Mac, Linux and Android apps from index.html
 # and publishes them as a GitHub Release.  Built by H24 Creationz.
+#
 # Run it: GitHub → Actions → "Build Beam Beam apps" → Run workflow → type a
-# version (e.g. 1.0.1) → Run.  About 15 minutes later every download button on
-# the website points at the new version.
+# version (e.g. 1.0.1) → Run.  About 15–20 minutes later every download button
+# on the website points at the new version.
+#
+# If one platform fails (for example GitHub has no free Mac machine), the others
+# are still published. Open the run, click "Re-run failed jobs", and the missing
+# app is added to the same release.
 name: Build Beam Beam apps
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version number (e.g. 1.0.1) — must be higher than the last one'
+        description: 'Version number (e.g. 1.0.1)'
         required: true
         default: '1.0.0'
+      mac_runner:
+        description: 'Mac build machine (switch if the Mac job waits too long)'
+        type: choice
+        default: macos-15-intel
+        options: [macos-15-intel, macos-26-intel, macos-15, macos-26]
 
 permissions:
   contents: write
@@ -21,8 +31,21 @@ env:
   NODE_VERSION: '22'
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the version number
+        run: |
+          if ! echo "$APP_VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Version must look like 1.0.1 (three numbers with dots). You typed: $APP_VERSION"
+            exit 1
+          fi
+          echo "Building Beam Beam $APP_VERSION"
+
   windows:
+    needs: check
     runs-on: windows-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -39,13 +62,18 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows
+          if-no-files-found: error
           path: |
             native/desktop/dist/BeamBeam-Setup-x64.exe
             native/desktop/dist/BeamBeam-Setup-arm64.exe
             native/desktop/dist/BeamBeam-Portable.exe
 
   mac:
-    runs-on: macos-latest
+    needs: check
+    # Intel Macs by default: the Apple Silicon queue is often full. The app built
+    # here is "universal", so it still runs natively on both Intel and Apple Silicon.
+    runs-on: ${{ github.event.inputs.mac_runner || 'macos-15-intel' }}
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -64,10 +92,13 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: mac
+          if-no-files-found: error
           path: native/desktop/dist/BeamBeam-Mac.dmg
 
   linux:
+    needs: check
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -82,12 +113,15 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: linux
+          if-no-files-found: error
           path: |
             native/desktop/dist/BeamBeam-Linux.AppImage
             native/desktop/dist/BeamBeam-Linux.deb
 
   android:
+    needs: check
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -136,30 +170,55 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: android
+          if-no-files-found: error
           path: native/mobile/BeamBeam-Android.apk
 
   release:
     needs: [windows, mac, linux, android]
+    # Publish whatever built, even if one platform failed or GitHub had no machine for it.
+    if: ${{ !cancelled() && contains(needs.*.result, 'success') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with: { path: out, merge-multiple: true }
-      - run: ls -la out
-      - uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ env.APP_VERSION }}
-          name: Beam Beam ${{ env.APP_VERSION }}
-          make_latest: true
-          body: |
-            **Beam Beam ${{ env.APP_VERSION }}** — send big files directly to anyone. Built by H24 Creationz.
+      - name: Publish the release (or add files to it)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ env.APP_VERSION }}
+          MAC: ${{ needs.mac.result }}
+          WIN: ${{ needs.windows.result }}
+          LIN: ${{ needs.linux.result }}
+          AND: ${{ needs.android.result }}
+        run: |
+          ls -la out
+          cat > notes.md <<EOF
+          **Beam Beam $APP_VERSION** — send big files directly to anyone. Built by H24 Creationz.
 
-            | Device | Download |
-            |---|---|
-            | Windows (Intel & AMD) | `BeamBeam-Setup-x64.exe` — or `BeamBeam-Portable.exe`, no install |
-            | Windows on ARM | `BeamBeam-Setup-arm64.exe` |
-            | Mac (Intel & Apple Silicon) | `BeamBeam-Mac.dmg` |
-            | Linux | `BeamBeam-Linux.AppImage` or `BeamBeam-Linux.deb` |
-            | Android | `BeamBeam-Android.apk` |
+          | Device | Download |
+          |---|---|
+          | Windows (Intel & AMD) | \`BeamBeam-Setup-x64.exe\` — or \`BeamBeam-Portable.exe\`, no install |
+          | Windows on ARM | \`BeamBeam-Setup-arm64.exe\` |
+          | Mac (Intel & Apple Silicon) | \`BeamBeam-Mac.dmg\` |
+          | Linux | \`BeamBeam-Linux.AppImage\` or \`BeamBeam-Linux.deb\` |
+          | Android | \`BeamBeam-Android.apk\` |
 
-            Easiest: open the website's Apps section — it picks the right file for your device.
-          files: out/*
+          Easiest: open the website's Apps section — it picks the right file for your device.
+          EOF
+          sed -i 's/^          //' notes.md
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "Release $TAG exists — adding or replacing files"
+            gh release upload "$TAG" out/* --clobber -R "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" out/* -R "$GITHUB_REPOSITORY" --title "Beam Beam $APP_VERSION" --notes-file notes.md --latest
+          fi
+          {
+            echo "## Beam Beam $APP_VERSION"
+            echo "| App | Result |"; echo "|---|---|"
+            echo "| Windows | $WIN |"; echo "| Mac | $MAC |"; echo "| Linux | $LIN |"; echo "| Android | $AND |"
+            for r in "$WIN" "$MAC" "$LIN" "$AND"; do
+              if [ "$r" != "success" ]; then
+                echo ""; echo "Something is missing from the release. Click **Re-run failed jobs** at the top of this page — the missing app will be added to the same release."
+                break
+              fi
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
