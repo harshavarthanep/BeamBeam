@@ -1,6 +1,5 @@
 # Beam Beam — builds the Windows, Mac, Linux and Android apps from index.html
 # and publishes them as a GitHub Release.  Built by H24 Creationz.
-#
 # Run it: GitHub → Actions → "Build Beam Beam apps" → Run workflow → type a
 # version (e.g. 1.0.1) → Run.  About 15 minutes later every download button on
 # the website points at the new version.
