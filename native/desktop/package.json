@@ -1,0 +1,52 @@
+{
+  "name": "beambeam",
+  "productName": "Beam Beam",
+  "version": "1.0.0",
+  "description": "Beam Beam — send big files directly to anyone. Built by H24 Creationz.",
+  "author": { "name": "H24 Creationz", "email": "harshavarthanep@gmail.com" },
+  "homepage": "https://github.com/harshavarthanep/BeamBeam",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "prepare-www": "node ../shared/prepare-www.mjs www",
+    "start": "npm run prepare-www && electron .",
+    "build:win": "npm run prepare-www && electron-builder --win --publish never",
+    "build:mac": "npm run prepare-www && electron-builder --mac --publish never",
+    "build:linux": "npm run prepare-www && electron-builder --linux --publish never"
+  },
+  "devDependencies": {
+    "electron": "37.2.6",
+    "electron-builder": "26.0.12"
+  },
+  "build": {
+    "appId": "com.h24creationz.beambeam",
+    "productName": "Beam Beam",
+    "copyright": "Copyright © H24 Creationz",
+    "files": ["main.js", "preload.js", "www/**/*", "build/icon.png", "package.json"],
+    "directories": { "output": "dist", "buildResources": "build" },
+    "asar": true,
+    "win": { "icon": "build/icon.png", "target": [{ "target": "nsis", "arch": ["x64"] }, { "target": "portable", "arch": ["x64"] }] },
+    "nsis": {
+      "artifactName": "BeamBeam-Setup-${arch}.${ext}",
+      "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true, "createStartMenuShortcut": true, "shortcutName": "Beam Beam",
+      "runAfterFinish": true, "deleteAppDataOnUninstall": false
+    },
+    "portable": { "artifactName": "BeamBeam-Portable.${ext}" },
+    "mac": {
+      "icon": "build/icon.png", "category": "public.app-category.productivity",
+      "target": [{ "target": "dmg", "arch": ["universal"] }],
+      "identity": null, "hardenedRuntime": false, "gatekeeperAssess": false,
+      "extendInfo": { "NSCameraUsageDescription": "Beam Beam uses the camera to scan transfer QR codes." }
+    },
+    "dmg": { "artifactName": "BeamBeam-Mac.${ext}", "title": "Beam Beam" },
+    "linux": {
+      "icon": "build/icon.png", "category": "Network", "maintainer": "H24 Creationz",
+      "synopsis": "Send big files directly to anyone",
+      "target": [{ "target": "AppImage", "arch": ["x64"] }, { "target": "deb", "arch": ["x64"] }]
+    },
+    "appImage": { "artifactName": "BeamBeam-Linux.${ext}" },
+    "deb": { "artifactName": "BeamBeam-Linux.${ext}" }
+  }
+}
